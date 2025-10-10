@@ -23,7 +23,7 @@ app.use(cors({
 app.use(express.json());
 
 // MongoDB Connection
-const mongoURI = "mongodb+srv://porchelvan-builders:raguldb@cluster0.rtuno3r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Replace with your MongoDB connection string
+const mongoURI = "mongodb+srv://ragul:raguldb@cluster0.rtuno3r.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Replace with your MongoDB connection string
 
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB connected successfully"))
