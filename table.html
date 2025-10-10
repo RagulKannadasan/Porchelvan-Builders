@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>table</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .service {
+            width: 50%;
+            height: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        h2 {
+            text-align: center;
+            color: #000000;
+        }
+        
+        table {
+            width: 50%;
+            border: 1px solid #ffffff;
+            height: 600px;
+            border-collapse: collapse;
+            border-radius: 8px;
+            margin: 20px auto;
+            background-color: #f4f4f4;
+        }
+        
+        th,
+        td {
+            padding: 12px;
+            border-radius: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        tr:hover {
+            background-color: #ffffff;
+        }
+        
+        .regbutton {
+            display: block;
+            width: fit-content;
+            margin: auto;
+            padding: 10px 20px;
+            background-color: rgb(9, 52, 183);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="service">
+        <h2>Our Services</h2>
+        <table>
+            <tr>
+                <th>S.No</th>
+                <th>Service</th>
+                <th>Duration <br> (Avg)</th>
+                <th>Expence <br>(Avg)</th>
+            </tr>
+            <tr>
+                <td>1.</td>
+                <td>Residential Construction</td>
+                <td>2 Years</td>
+                <td>200M &dollar; </td>
+            </tr>
+            <tr>
+                <td>2.</td>
+                <td>Commercial Construction</td>
+                <td>1 Years</td>
+                <td>50M &dollar; </td>
+            </tr>
+            <tr>
+                <td>3.</td>
+                <td>Renovation and Remodeling</td>
+                <td>2 Months</td>
+                <td>2M &dollar; </td>
+            </tr>
+            <tr>
+                <td>4.</td>
+                <td>Interior Design</td>
+                <td>1 Month</td>
+                <td>10M &dollar; </td>
+            </tr>
+            <tr>
+                <td>5.</td>
+                <td>Architectural Planning</td>
+                <td>Depends on the Project</td>
+                <td>500K &dollar; </td>
+            </tr>
+        </table>
+        <button class="regbutton"><a href="register.html"><b>REGISTER</b></a></button>
+    </div>
+
+</body>
+
+</html>
