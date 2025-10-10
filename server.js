@@ -65,4 +65,26 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+// Admin Login
+app.post("/api/admin/login", (req, res) => {
+  const { username, password } = req.body;
+  // IMPORTANT: In a real application, use a more secure authentication method!
+  if (username === "ragul" && password === "1234567890") {
+    res.status(200).json({ message: "Login successful" });
+  } else {
+    res.status(401).json({ message: "Invalid credentials" });
+  }
+});
+
+// Get all registered users
+app.get("/api/admin/users", async (req, res) => {
+  try {
+    const users = await Registration.find();
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+});
+
 module.exports = app;

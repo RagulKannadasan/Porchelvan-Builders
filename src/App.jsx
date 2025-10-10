@@ -8,6 +8,8 @@ import Address from "./components/Address";
 import Service from "./components/Service";
 import About from "./components/About";
 import Contact from "./components/Contact";
+import AdminLogin from "./components/AdminLogin";
+import AdminPanel from "./components/AdminPanel";
 import './App.css';
 
 const AppContent = () => {
@@ -37,6 +39,9 @@ const AppContent = () => {
           <li>
             <Link to="/register">REGISTER</Link>
           </li>
+          <li>
+            <Link to="/admin">ADMIN</Link>
+          </li>
         </ul>
       </nav>
       <div className="content" style={{ flex: 1 }}>
@@ -48,6 +53,8 @@ const AppContent = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/address" element={<Address />} />
           <Route path="/service" element={<Service />} />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin-panel" element={<AdminPanel />} />
         </Routes>
       </div>
       <Footer />
