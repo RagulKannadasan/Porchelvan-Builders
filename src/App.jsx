@@ -15,7 +15,7 @@ const AppContent = () => {
   const location = useLocation();
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <div className="header">
         <img src="/logo.png" alt="Porchelvan Builders Logo" />
         <div className="header-text">
@@ -37,17 +37,22 @@ const AppContent = () => {
           <li>
             <Link to="/service">SERVICE</Link>
           </li>
+          <li>
+            <Link to="/register">REGISTER</Link>
+          </li>
         </ul>
       </nav>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/address" element={<Address />} />
-        <Route path="/service" element={<Service />} />
-      </Routes>
+      <div className="content" style={{ flex: 1 }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/address" element={<Address />} />
+          <Route path="/service" element={<Service />} />
+        </Routes>
+      </div>
       <Footer />
     </div>
   );

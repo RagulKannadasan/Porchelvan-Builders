@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   return (
@@ -23,7 +24,9 @@ const Home = () => {
           <li>Interior Design</li>
           <li>Architectural Planning</li>
         </ul>
-        <button>REGISTER</button>
+        <Link to="/register">
+          <button className="btn">REGISTER</button>
+        </Link>
       </div>
 
       <div style={{ padding: '2rem' }}>
