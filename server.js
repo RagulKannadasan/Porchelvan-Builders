@@ -3,11 +3,11 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const app = express();
-const port = process.env.PORT || 5000;
 
 // Middleware
 const allowedOrigins = [
-  'https://3000-firebase-porchelvanbuildgit-1760097351440.cluster-y75up3teuvc62qmnwys4deqv6y.cloudworkstations.dev'
+  'https://3000-firebase-porchelvanbuildgit-1760097351440.cluster-y75up3teuvc62qmnwys4deqv6y.cloudworkstations.dev',
+  'https://porchelvan-builders-45on.vercel.app'
 ];
 
 app.use(cors({ 
@@ -65,6 +65,4 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+module.exports = app;
