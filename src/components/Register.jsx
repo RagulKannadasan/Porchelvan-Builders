@@ -16,7 +16,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("https://5000-firebase-porchelvanbuildgit-1760097351440.cluster-y75up3teuvc62qmnwys4deqv6y.cloudworkstations.dev/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

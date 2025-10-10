@@ -1,6 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
-import Header from "./components/Header";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
 import Gallery from "./components/Gallery";
@@ -12,8 +11,6 @@ import Contact from "./components/Contact";
 import './App.css';
 
 const AppContent = () => {
-  const location = useLocation();
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <div className="header">

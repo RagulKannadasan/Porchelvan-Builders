@@ -31,7 +31,7 @@ const Home = () => {
 
       <div style={{ padding: '2rem' }}>
         <h2>Images</h2>
-        <a href="#">Click to view more on site project images...</a>
+        <Link to="/gallery">Click to view more on site project images...</Link>
       </div>
     </div>
   );

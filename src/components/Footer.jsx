@@ -6,8 +6,8 @@ const Footer = () => {
       <p>Porchelvan Builders 2023, All rights reserved</p>
       <p>Copyright@2023</p>
       <div>
-        <a href="#" style={{ marginRight: '1rem' }}>YouTube</a>
-        <a href="#">Instagram</a>
+        <a href="/" style={{ marginRight: '1rem' }}>YouTube</a>
+        <a href="/">Instagram</a>
       </div>
       <p>Address: No. 19, West street, Kavarappattu, Orathanadu, Thanjavur, Tamil Nadu - 614625</p>
     </div>
