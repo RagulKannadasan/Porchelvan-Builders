@@ -1,0 +1,12 @@
+.address-container {
+  padding: 2rem;
+  text-align: center;
+}
+
+.address-container h2 {
+  margin-bottom: 1rem;
+}
+
+.address-container p {
+  margin: 0.5rem 0;
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import './AdminPanel.css';
 
 const AdminPanel = () => {
   const [users, setUsers] = useState([]);
@@ -45,10 +46,10 @@ const AdminPanel = () => {
   };
 
   return (
-    <div>
+    <div className="admin-panel-container">
       <h2>Admin Panel</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <table>
+      {error && <p className="error-message">{error}</p>}
+      <table className="user-table">
         <thead>
           <tr>
             <th>Name</th>
@@ -66,7 +67,7 @@ const AdminPanel = () => {
               <td>{user.phone}</td>
               <td>{user.address}</td>
               <td>
-                <button onClick={() => handleDelete(user._id)} className="btn btn-danger">
+                <button onClick={() => handleDelete(user._id)} className="delete-btn">
                   Delete
                 </button>
               </td>

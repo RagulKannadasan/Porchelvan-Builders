@@ -1,23 +1,14 @@
-body {
-  margin: 0;
-  font-family: 'Montserrat', sans-serif;
-  background-color: #f4f7f6;
-  color: #333;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.header {
-  background-color: white;
-  padding: 20px 40px;
+.header-content {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  justify-content: center;
+  padding: 20px;
+  background-color: white;
 }
 
-.header img {
-  height: 60px;
+.logo {
+  height: 80px;
+  margin-right: 20px;
 }
 
 .header-text h1 {
@@ -25,21 +16,22 @@ body {
   color: #2c3e50;
   margin: 0;
   font-weight: 700;
+  text-transform: uppercase;
 }
 
 .header-text span {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #7f8c8d;
-  margin-top: 5px;
+  display: block;
 }
 
-nav {
+.nav-menu {
   background-color: #34495e;
-  padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1rem 0;
+  text-align: center;
 }
 
-nav ul {
+.nav-menu ul {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -47,79 +39,23 @@ nav ul {
   justify-content: center;
 }
 
-nav ul li {
+.nav-menu ul li {
   margin: 0 1.5rem;
 }
 
-nav ul li a {
+.nav-menu ul li a {
   color: white;
   text-decoration: none;
   font-weight: 700;
   transition: color 0.3s ease;
+  padding: 0.5rem 0;
+  text-transform: uppercase;
 }
 
-nav ul li a:hover {
+.nav-menu ul li a:hover {
   color: #1abc9c;
 }
 
-/* General Content Styles */
 .content {
-  padding: 40px;
-}
-
-h2 {
-  color: #2c3e50;
-  border-bottom: 2px solid #1abc9c;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-}
-
-ul li {
-  line-height: 1.8;
-}
-
-/* Button Styles */
-.btn {
-  background-color: #1abc9c;
-  color: white;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 700;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #16a085;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  .header-text {
-    text-align: center;
-    margin-top: 10px;
-  }
-
-  .header-text h1 {
-    font-size: 1.5rem;
-  }
-
-  nav {
-    overflow-x: auto;
-  }
-
-  nav ul {
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-  }
-
-  .content {
-    padding: 20px;
-  }
+  padding: 20px;
 }

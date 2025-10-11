@@ -16,13 +16,15 @@ const AppContent = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <div className="header">
-        <img src="/logo.png" alt="Porchelvan Builders Logo" />
-        <div className="header-text">
-          <h1>Porchelvan Builders</h1>
-          <span>Quality Assured</span>
+        <div className="header-content">
+            <img src="/logo.png" alt="Porchelvan Builders Logo" className="logo"/>
+            <div className="header-text">
+            <h1>Porchelvan Builders</h1>
+            <span>Quality Assured</span>
+            </div>
         </div>
       </div>
-      <nav>
+      <nav className="nav-menu">
         <ul>
           <li>
             <Link to="/">HOME</Link>
