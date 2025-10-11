@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
@@ -13,6 +13,12 @@ import AdminPanel from "./components/AdminPanel";
 import './App.css';
 
 const AppContent = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <div className="header">
@@ -23,26 +29,34 @@ const AppContent = () => {
             <span>Quality Assured</span>
             </div>
         </div>
+        <button className="menu-button" onClick={toggleMenu}>
+            <div />
+            <div />
+            <div />
+        </button>
       </div>
-      <nav className="nav-menu">
+      <nav className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
         <ul>
-          <li>
-            <Link to="/">HOME</Link>
+          <li className="quit-button-container">
+            <button onClick={toggleMenu} className="quit-button">×</button>
           </li>
           <li>
-            <Link to="/about">ABOUT</Link>
+            <Link to="/" onClick={toggleMenu}>HOME</Link>
           </li>
           <li>
-            <Link to="/contact">CONTACT</Link>
+            <Link to="/about" onClick={toggleMenu}>ABOUT</Link>
           </li>
           <li>
-            <Link to="/service">SERVICE</Link>
+            <Link to="/contact" onClick={toggleMenu}>CONTACT</Link>
           </li>
           <li>
-            <Link to="/register">REGISTER</Link>
+            <Link to="/service" onClick={toggleMenu}>SERVICE</Link>
           </li>
           <li>
-            <Link to="/admin">ADMIN</Link>
+            <Link to="/register" onClick={toggleMenu}>REGISTER</Link>
+          </li>
+          <li>
+            <Link to="/admin" onClick={toggleMenu}>ADMIN</Link>
           </li>
         </ul>
       </nav>
