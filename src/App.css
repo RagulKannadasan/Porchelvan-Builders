@@ -93,3 +93,33 @@ ul li {
 .btn:hover {
   background-color: #16a085;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .header-text {
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .header-text h1 {
+    font-size: 1.5rem;
+  }
+
+  nav ul {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav ul li {
+    margin: 0.5rem 0;
+  }
+
+  .content {
+    padding: 20px;
+  }
+}
