@@ -80,16 +80,7 @@
 }
 
 .quit-button-container {
-  text-align: right;
-  padding: 10px 20px;
-}
-
-.quit-button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 2rem;
-  cursor: pointer;
+    display: none;
 }
 
 @media (max-width: 768px) {
@@ -125,5 +116,19 @@
 
   .nav-menu ul li {
     margin: 1rem 0;
+  }
+
+  .quit-button-container {
+    display: block;
+    text-align: right;
+    padding: 10px 20px;
+  }
+
+  .quit-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
   }
 }
