@@ -1,20 +1,58 @@
-.admin-sidebar {
-  width: 200px;
-  background-color: #f4f4f4;
-  padding: 20px;
+/* Desktop view */
+@media (min-width: 769px) {
+  .admin-sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    padding: 20px;
+  }
+
+  .admin-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .admin-sidebar li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .admin-sidebar li:hover {
+    background-color: #ddd;
+  }
 }
 
-.admin-sidebar ul {
-  list-style-type: none;
-  padding: 0;
-}
+/* Mobile view */
+@media (max-width: 768px) {
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: -250px; /* Hidden by default */
+    width: 250px;
+    height: 100%;
+    background-color: #f4f4f4;
+    padding: 20px;
+    z-index: 1000;
+    transition: left 0.3s ease-in-out;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  }
 
-.admin-sidebar li {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #ddd;
-}
+  .admin-sidebar.open {
+    left: 0; /* Shown when open */
+  }
 
-.admin-sidebar li:hover {
-  background-color: #ddd;
+  .admin-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .admin-sidebar li {
+    padding: 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .admin-sidebar li:hover {
+    background-color: #ddd;
+  }
 }

@@ -5,4 +5,29 @@
 .admin-content {
   flex-grow: 1;
   padding: 20px;
+  transition: margin-left 0.3s;
+}
+
+.sidebar-toggle {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001;
+  background: #333;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    display: block; /* Show the toggle button */
+  }
+
+  .admin-content.sidebar-open {
+    margin-left: 250px; /* Push content when sidebar is open */
+  }
 }

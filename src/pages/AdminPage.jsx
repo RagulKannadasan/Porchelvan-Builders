@@ -6,6 +6,7 @@ import './AdminPage.css';
 
 const AdminPage = () => {
   const [selected, setSelected] = useState('users');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const renderContent = () => {
     switch (selected) {
@@ -20,8 +21,11 @@ const AdminPage = () => {
 
   return (
     <div className="admin-page">
-      <AdminSidebar onSelect={setSelected} />
-      <div className="admin-content">
+      <button className="sidebar-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+        {isSidebarOpen ? 'Close' : 'Menu'}
+      </button>
+      <AdminSidebar onSelect={setSelected} isOpen={isSidebarOpen} />
+      <div className={`admin-content ${isSidebarOpen ? 'sidebar-open' : ''}`}>
         {renderContent()}
       </div>
     </div>
