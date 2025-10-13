@@ -22,39 +22,39 @@ const AppContent = () => {
   };
 
   return (
-    <div style={{ display: isAdminPage ? 'block' : 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {!isAdminPage && (
-        <>
-          <div className="header">
-            <div className="header-content">
-              <img src="/logo.png" alt="Porchelvan Builders Logo" className="logo"/>
-              <div className="header-text">
-                <h1>Porchelvan Builders</h1>
-                <span>Quality Assured</span>
-              </div>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div className="header">
+        <div className="header-content">
+            <img src="/logo.png" alt="Porchelvan Builders Logo" className="logo"/>
+            <div className="header-text">
+            <h1>Porchelvan Builders</h1>
+            <span>Quality Assured</span>
             </div>
+        </div>
+        {!isAdminPage && (
             <button className="menu-button" onClick={toggleMenu}>
-              <div />
-              <div />
-              <div />
+                <div />
+                <div />
+                <div />
             </button>
-          </div>
-          <nav className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
-            <ul>
-              <li className="quit-button-container">
-                <button onClick={toggleMenu} className="quit-button">×</button>
-              </li>
-              <li><Link to="/" onClick={toggleMenu}>HOME</Link></li>
-              <li><Link to="/about" onClick={toggleMenu}>ABOUT</Link></li>
-              <li><Link to="/contact" onClick={toggleMenu}>CONTACT</Link></li>
-              <li><Link to="/service" onClick={toggleMenu}>SERVICE</Link></li>
-              <li><Link to="/register" onClick={toggleMenu}>REGISTER</Link></li>
-              <li><Link to="/admin" onClick={toggleMenu}>ADMIN</Link></li>
-            </ul>
-          </nav>
-        </>
+        )}
+      </div>
+      {!isAdminPage && (
+        <nav className={`nav-menu ${isMenuOpen ? 'open' : ''}`}>
+          <ul>
+            <li className="quit-button-container">
+              <button onClick={toggleMenu} className="quit-button">×</button>
+            </li>
+            <li><Link to="/" onClick={toggleMenu}>HOME</Link></li>
+            <li><Link to="/about" onClick={toggleMenu}>ABOUT</Link></li>
+            <li><Link to="/contact" onClick={toggleMenu}>CONTACT</Link></li>
+            <li><Link to="/service" onClick={toggleMenu}>SERVICE</Link></li>
+            <li><Link to="/register" onClick={toggleMenu}>REGISTER</Link></li>
+            <li><Link to="/admin" onClick={toggleMenu}>ADMIN</Link></li>
+          </ul>
+        </nav>
       )}
-      <div className="content" style={{ flex: isAdminPage ? '' : 1 }}>
+      <div className="content" style={{ flex: 1 }}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
