@@ -21,8 +21,10 @@ const AdminPage = () => {
 
   return (
     <div className="admin-page">
-      <button className="sidebar-toggle" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-        {isSidebarOpen ? 'Close' : 'Menu'}
+      <button className={`sidebar-toggle ${isSidebarOpen ? 'open' : ''}`} onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
       <AdminSidebar onSelect={setSelected} isOpen={isSidebarOpen} />
       <div className={`admin-content ${isSidebarOpen ? 'sidebar-open' : ''}`}>
