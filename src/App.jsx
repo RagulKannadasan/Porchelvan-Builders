@@ -9,7 +9,7 @@ import Service from "./components/Service";
 import About from "./components/About";
 import Contact from "./components/Contact";
 import AdminLogin from "./components/AdminLogin";
-import AdminPanel from "./components/AdminPanel";
+import AdminPage from "./pages/AdminPage";
 import './App.css';
 
 const AppContent = () => {
@@ -70,7 +70,7 @@ const AppContent = () => {
           <Route path="/address" element={<Address />} />
           <Route path="/service" element={<Service />} />
           <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin-panel" element={<AdminPanel />} />
+          <Route path="/admin-panel" element={<AdminPage />} />
         </Routes>
       </div>
       <Footer />
