@@ -28,6 +28,17 @@ const registrationSchema = new mongoose.Schema({
 
 const Registration = mongoose.model("Registration", registrationSchema);
 
+// Project Schema
+const projectSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  imageUrl: { type: String, required: true },
+  timestamp: { type: Date, default: Date.now },
+});
+
+const Project = mongoose.model("Project", projectSchema);
+
+
 // API Routes
 app.post("/api/register", async (req, res) => {
   try {
@@ -77,6 +88,46 @@ app.delete("/api/admin/users/:id", async (req, res) => {
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     console.error("Error deleting user:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+});
+
+// Project Routes
+app.post("/api/projects", async (req, res) => {
+  try {
+    const { name, description, imageUrl } = req.body;
+    if (!name || !description || !imageUrl) {
+      return res.status(400).json({ message: "Please fill in all fields." });
+    }
+    const newProject = new Project({ name, description, imageUrl });
+    await newProject.save();
+    res.status(201).json({ message: "Project added successfully!" });
+  } catch (error) {
+    console.error("Project creation error:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+});
+
+app.get("/api/projects", async (req, res) => {
+  try {
+    const projects = await Project.find();
+    res.status(200).json(projects);
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+});
+
+app.delete("/api/projects/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedProject = await Project.findByIdAndDelete(id);
+    if (!deletedProject) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+    res.status(200).json({ message: "Project deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting project:", error);
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 });
