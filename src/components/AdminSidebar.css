@@ -4,6 +4,7 @@
     width: 200px;
     background-color: #f4f4f4;
     padding: 20px;
+    box-sizing: border-box;
   }
 
   .admin-sidebar ul {
@@ -35,6 +36,7 @@
     z-index: 1000;
     transition: left 0.3s ease-in-out;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    box-sizing: border-box;
   }
 
   .admin-sidebar.open {
