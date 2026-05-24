@@ -113,6 +113,14 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Backend is running smoothly' });
 });
 
+// Serve frontend static files in production (Render deployment)
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+app.use((req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
