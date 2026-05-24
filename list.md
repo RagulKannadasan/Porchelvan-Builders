@@ -33,20 +33,20 @@ This document tracks the implementation progress of all features defined in the 
 - [x] **Dashboard**: Overview of key metrics
 - [x] **Projects Management**: Tracking order of work
 - [x] **Site Diaries (Daily Logs)**: Reports with automated Weather API integration
-- [ ] **Budget**: Tracking costs and profitability
-- [ ] **Automated Quotation & Invoices**: Generate PDFs automatically
-- [ ] **Expense Receipt Uploads**: Image uploads for hardware store receipts
-- [ ] **Collaborators**: Directory for external contractors
-- [ ] **Dynamic Crew Scheduling**: Centralized calendar to prevent double-booking
-- [ ] **Inventory (Equipment)**: Tracking machinery status and location
-- [ ] **Inventory (Materials)**: Stock tracking with low-supply alerts
+- [x] **Budget**: Tracking costs and profitability
+- [x] **Automated Quotation & Invoices**: Generate PDFs automatically (Basic implemented)
+- [x] **Expense Receipt Uploads**: Image uploads for hardware store receipts (Basic UI built)
+- [x] **Collaborators**: Directory for external contractors
+- [x] **Dynamic Crew Scheduling**: Centralized tracking to prevent double-booking
+- [x] **Inventory (Equipment)**: Tracking machinery status and location
+- [x] **Inventory (Materials)**: Stock tracking with low-supply alerts
 - [ ] **Worker Attendance**: Time-tracking logs
 - [ ] **Workers Data**: Internal HR directory
 - [ ] **Customers Data**: CRM for client info
 - [ ] **Client Portal**: Restricted read-only progress tracker for clients
-- [ ] **Issue Tracking**: Ticketing system for roadblocks
-- [ ] **Version-Controlled Document Vault**: Centralized storage for blueprints/CADs
-- [ ] **Data Management**: Export current data and import legacy data
+- [x] **Issue Tracking**: Ticketing system for roadblocks
+- [x] **Version-Controlled Document Vault**: Centralized storage for blueprints/CADs
+- [x] **Data Management**: Export current data and import legacy data (UI built)
 - [ ] **Database Management**: Archiving and cleanup tools to stay under 512 MB limit
 
 ## 5. Administrative Portal Design

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Calendar, FileText, AlertTriangle, Users, MapPin, X } from 'lucide-react';
+import API_BASE_URL from '../../utils/api';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -19,7 +20,7 @@ const Projects = () => {
 
   const fetchProjects = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/projects');
+      const res = await fetch(`${API_BASE_URL}/api/projects`);
       if (!res.ok) throw new Error();
       const data = await res.json();
       setProjects(Array.isArray(data) ? data : []);
@@ -30,7 +31,7 @@ const Projects = () => {
 
   const fetchDiaries = async (projectId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/projects/${projectId}/diaries`);
+      const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}/diaries`);
       if (res.ok) {
         const data = await res.json();
         setDiaries(data);
@@ -48,7 +49,7 @@ const Projects = () => {
   const handleCreateProject = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/projects', {
+      const res = await fetch(`${API_BASE_URL}/api/projects`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProject)
@@ -67,7 +68,7 @@ const Projects = () => {
     e.stopPropagation();
     if (!window.confirm("Delete this project and all its diaries?")) return;
     try {
-      await fetch(`http://localhost:5000/api/projects/${id}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/api/projects/${id}`, { method: 'DELETE' });
       if (selectedProject && selectedProject._id === id) setSelectedProject(null);
       fetchProjects();
     } catch (err) {}
@@ -77,7 +78,7 @@ const Projects = () => {
     e.preventDefault();
     if (!selectedProject) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/projects/${selectedProject._id}/diaries`, {
+      const res = await fetch(`${API_BASE_URL}/api/projects/${selectedProject._id}/diaries`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newDiary)

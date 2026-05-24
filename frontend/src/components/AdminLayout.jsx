@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, HardHat, DollarSign, Users, Package, Calendar, Settings, Home, ShieldAlert } from 'lucide-react';
+import { Menu, X, LayoutDashboard, HardHat, DollarSign, Users, Package, Calendar, Settings, Home, ShieldAlert, Download, User } from 'lucide-react';
 import '../index.css';
 
 const AdminLayout = () => {
@@ -25,7 +25,10 @@ const AdminLayout = () => {
         <button onClick={() => setSidebarOpen(true)} className="hamburger-btn">
           <Menu size={24} />
         </button>
-        <h2>Admin Portal</h2>
+        <div className="mobile-brand">
+          <div className="logo-mark-sm">PB</div>
+          <h2>Admin Portal</h2>
+        </div>
       </div>
 
       {/* Sidebar Overlay (Mobile) */}
@@ -36,12 +39,19 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
-          <h2>Internal System</h2>
+          <div className="admin-logo-section">
+            <div className="logo-mark">PB</div>
+            <div className="logo-text-block">
+              <span className="logo-text">Porchelvan</span>
+              <span className="logo-subtext">BUILDERS</span>
+            </div>
+          </div>
           <button onClick={() => setSidebarOpen(false)} className="close-btn-mobile">
             <X size={24} />
           </button>
         </div>
 
+        {/* Navigation Section */}
         <nav className="admin-nav">
           {navItems.map((item) => (
             <Link
@@ -50,47 +60,69 @@ const AdminLayout = () => {
               className={`admin-nav-item ${location.pathname === item.path ? 'active' : ''}`}
               onClick={() => setSidebarOpen(false)}
             >
-              {item.icon}
-              <span>{item.name}</span>
+              <div className="nav-icon-wrapper">{item.icon}</div>
+              <div className="nav-text-wrapper">
+                <span className="nav-item-en">{item.name}</span>
+              </div>
             </Link>
           ))}
           
           <div className="admin-nav-divider"></div>
           
-          <Link to="/" className="admin-nav-item">
-            <Home size={20} />
-            <span>Back to Public Site</span>
+          <Link to="/" className="admin-nav-item public-site-link">
+            <div className="nav-icon-wrapper"><Home size={20} /></div>
+            <div className="nav-text-wrapper">
+              <span className="nav-item-en">Back to Public Site</span>
+            </div>
           </Link>
         </nav>
+
+        {/* Install App Button */}
+        <div className="admin-sidebar-footer">
+          <button className="btn-install-app" onClick={() => alert('App Installation Initiated!')}>
+            <Download size={16} />
+            <div className="install-text">
+              <span className="install-en">Install App</span>
+            </div>
+          </button>
+        </div>
       </aside>
 
       {/* Main Content Area */}
       <main className="admin-main">
-        <div className="admin-content-wrapper">
+        <div className="admin-content-wrapper animate-fade-in">
           <Outlet />
         </div>
       </main>
 
       <style>{`
         /* 
-          Admin Portal Design incorporating Logo Brand Colors 
+          PREMIUM ADMIN PORTAL DESIGN SYSTEM
+          Inspired by Modern Dashboard Color Science & Layouts
         */
         :root {
-          --admin-bg: #f9f9f9;
-          --admin-surface: #ffffff;
-          --admin-border: #e0e0e0;
-          --admin-text: #111111;
-          --admin-text-muted: #666666;
-          --admin-hover: #f1f1f1;
+          --admin-bg: #F8FAFC;         /* Soft warm Slate-Grey */
+          --admin-surface: #FFFFFF;    /* Pure White */
+          --admin-border: #E2E8F0;     /* Ultra subtle border */
+          --admin-text: #0F172A;       /* Slate 900 */
+          --admin-text-muted: #64748B; /* Slate 500 */
+          --admin-hover: #F1F5F9;      /* Slate 100 */
+          --brand-indigo: #1E3A8A;     /* Premium Deep Indigo */
+          --brand-orange: #F97316;     /* Vibrant Safety Orange */
+          --brand-orange-light: #FFedd5;
+          --gradient-brand: linear-gradient(135deg, var(--brand-indigo) 0%, #3B82F6 100%);
+          --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02);
         }
 
         [data-theme='dark'] {
-          --admin-bg: #0a0a0a;
-          --admin-surface: #141414;
-          --admin-border: #2a2a2a;
-          --admin-text: #ffffff;
-          --admin-text-muted: #a0a0a0;
-          --admin-hover: #1f1f1f;
+          --admin-bg: #090D1A;         /* Deep Obsidian-Navy */
+          --admin-surface: #111827;    /* Charcoal-Navy */
+          --admin-border: #1F2937;     /* Dark Border */
+          --admin-text: #F9FAFB;       /* Pure White */
+          --admin-text-muted: #9CA3AF; /* Grey 400 */
+          --admin-hover: #1F2937;      /* Dark Hover */
+          --brand-orange-light: #372217;
+          --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
         }
 
         .admin-container {
@@ -100,13 +132,14 @@ const AdminLayout = () => {
           color: var(--admin-text);
           font-family: 'Inter', sans-serif;
           overflow: hidden;
+          transition: background-color 0.3s, color 0.3s;
         }
 
         /* Mobile Header */
         .admin-mobile-header {
           display: none;
           align-items: center;
-          padding: 1rem;
+          padding: 0.75rem 1.5rem;
           background-color: var(--admin-surface);
           border-bottom: 1px solid var(--admin-border);
           position: fixed;
@@ -114,6 +147,34 @@ const AdminLayout = () => {
           left: 0;
           right: 0;
           z-index: 40;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .mobile-brand {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-left: 0.5rem;
+        }
+
+        .logo-mark-sm {
+          background: linear-gradient(135deg, var(--brand-indigo) 0%, var(--brand-orange) 100%);
+          color: white;
+          width: 32px;
+          height: 32px;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 800;
+          font-size: 0.9rem;
+        }
+
+        .admin-mobile-header h2 {
+          font-size: 1.1rem;
+          font-weight: 800;
+          margin: 0;
+          letter-spacing: -0.3px;
         }
 
         .hamburger-btn {
@@ -121,23 +182,24 @@ const AdminLayout = () => {
           border: none;
           color: var(--admin-text);
           cursor: pointer;
-          margin-right: 1rem;
           display: flex;
+          padding: 0.5rem;
+          margin-left: -0.5rem;
         }
 
         /* Sidebar */
         .admin-sidebar {
-          width: 260px;
+          width: 280px;
           background-color: var(--admin-surface);
           border-right: 1px solid var(--admin-border);
           display: flex;
           flex-direction: column;
-          transition: transform 0.3s ease;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           z-index: 50;
         }
 
         .admin-sidebar-header {
-          height: 70px;
+          height: 76px;
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -145,11 +207,45 @@ const AdminLayout = () => {
           border-bottom: 1px solid var(--admin-border);
         }
 
-        .admin-sidebar-header h2 {
-          font-size: 1.25rem;
+        .admin-logo-section {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .logo-mark {
+          background: linear-gradient(135deg, var(--brand-indigo) 0%, var(--brand-orange) 100%);
+          color: white;
+          width: 38px;
+          height: 38px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           font-weight: 800;
-          margin: 0;
+          font-size: 1.15rem;
+          box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
+        }
+
+        .logo-text-block {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .logo-text {
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: var(--admin-text);
           letter-spacing: -0.5px;
+          line-height: 1.2;
+        }
+
+        .logo-subtext {
+          font-size: 0.65rem;
+          font-weight: 800;
+          letter-spacing: 1.5px;
+          color: var(--brand-orange);
+          margin-top: 1px;
         }
 
         .close-btn-mobile {
@@ -158,13 +254,87 @@ const AdminLayout = () => {
           border: none;
           color: var(--admin-text);
           cursor: pointer;
+          padding: 0.5rem;
         }
 
-        .admin-nav {
-          padding: 1.5rem 1rem;
+        /* Profile Section */
+        .admin-profile-section {
+          padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+          border-bottom: 1px solid var(--admin-border);
+        }
+
+        .admin-profile-card {
+          background-color: var(--admin-bg);
+          border: 1px solid var(--admin-border);
+          border-radius: 12px;
+          padding: 1rem;
+          box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+        }
+
+        .profile-header-info {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .profile-avatar {
+          width: 44px;
+          height: 44px;
+          background: linear-gradient(135deg, var(--brand-indigo) 0%, #3B82F6 100%);
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 700;
+          font-size: 0.95rem;
+          box-shadow: 0 4px 8px rgba(30, 58, 138, 0.15);
+        }
+
+        .profile-text-info {
           display: flex;
           flex-direction: column;
-          gap: 0.25rem;
+          flex: 1;
+          min-width: 0;
+        }
+
+        .profile-text-info h4 {
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: var(--admin-text);
+          margin: 0 0 0.15rem 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .profile-email {
+          font-size: 0.7rem;
+          color: var(--admin-text-muted);
+          margin-bottom: 0.4rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .profile-role-badge {
+          align-self: flex-start;
+          font-size: 0.65rem;
+          font-weight: 800;
+          background-color: var(--brand-orange-light);
+          color: var(--brand-orange);
+          padding: 0.15rem 0.5rem;
+          border-radius: 50px;
+          letter-spacing: 0.5px;
+          border: 1px solid rgba(249, 115, 22, 0.15);
+        }
+
+        /* Navigation Links */
+        .admin-nav {
+          padding: 1.25rem 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
           flex: 1;
           overflow-y: auto;
         }
@@ -172,31 +342,136 @@ const AdminLayout = () => {
         .admin-nav-item {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          padding: 0.75rem 1rem;
-          border-radius: 6px;
+          gap: 0.85rem;
+          padding: 0.65rem 0.85rem;
+          border-radius: 10px;
           color: var(--admin-text-muted);
           text-decoration: none;
-          font-weight: 500;
-          font-size: 0.95rem;
-          transition: all 0.2s ease;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
         }
 
+        .nav-icon-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          background-color: transparent;
+          transition: all 0.25s ease;
+          flex-shrink: 0;
+        }
+
+        .nav-text-wrapper {
+          display: flex;
+          flex-direction: column;
+          min-width: 0;
+        }
+
+        .nav-item-en {
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: var(--admin-text-muted);
+          transition: color 0.25s ease;
+        }
+
+        /* Hover States */
         .admin-nav-item:hover {
           background-color: var(--admin-hover);
+        }
+        
+        .admin-nav-item:hover .nav-item-en {
           color: var(--admin-text);
         }
 
+        /* Active Selection */
         .admin-nav-item.active {
-          background: var(--gradient-brand);
+          background-color: var(--brand-indigo);
+          box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+        }
+
+        .admin-nav-item.active .nav-icon-wrapper {
           color: white;
-          box-shadow: 0 4px 10px rgba(74, 20, 140, 0.2);
+        }
+
+        .admin-nav-item.active .nav-item-en {
+          color: white;
+          font-weight: 700;
+        }
+
+        /* Left Orange Accent on Active */
+        .admin-nav-item.active::before {
+          content: '';
+          position: absolute;
+          left: -4px;
+          top: 25%;
+          height: 50%;
+          width: 4px;
+          background-color: var(--brand-orange);
+          border-radius: 0 4px 4px 0;
         }
 
         .admin-nav-divider {
           height: 1px;
           background-color: var(--admin-border);
-          margin: 1rem 0;
+          margin: 0.75rem 0.5rem;
+        }
+
+        .public-site-link:hover {
+          background-color: rgba(249, 115, 22, 0.08);
+        }
+        .public-site-link:hover .nav-item-en {
+          color: var(--brand-orange);
+        }
+        .public-site-link:hover .nav-icon-wrapper {
+          color: var(--brand-orange);
+        }
+
+        /* Sidebar Footer Install Button */
+        .admin-sidebar-footer {
+          padding: 1.25rem;
+          border-top: 1px solid var(--admin-border);
+        }
+
+        .btn-install-app {
+          width: 100%;
+          background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+          border: 1px solid rgba(0, 0, 0, 0.05);
+          color: #0F172A;
+          padding: 0.75rem 1rem;
+          border-radius: 50px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.75rem;
+          cursor: pointer;
+          font-weight: 700;
+          box-shadow: 0 4px 14px rgba(255, 165, 0, 0.25);
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-install-app:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(255, 165, 0, 0.35);
+        }
+
+        .btn-install-app svg {
+          flex-shrink: 0;
+        }
+
+        .install-text {
+          display: flex;
+          flex-direction: column;
+          text-align: left;
+          min-width: 0;
+        }
+
+        .install-en {
+          font-size: 0.8rem;
+          font-weight: 800;
+          line-height: 1.2;
+          letter-spacing: -0.2px;
         }
 
         /* Main Content */
@@ -208,8 +483,8 @@ const AdminLayout = () => {
         }
 
         .admin-content-wrapper {
-          padding: 2.5rem;
-          max-width: 1200px;
+          padding: 2rem 2.5rem;
+          max-width: 1280px;
           width: 100%;
           margin: 0 auto;
         }
@@ -226,6 +501,7 @@ const AdminLayout = () => {
             bottom: 0;
             left: 0;
             transform: translateX(-100%);
+            box-shadow: 0 0 25px rgba(0,0,0,0.15);
           }
 
           .admin-sidebar.open {
@@ -242,16 +518,17 @@ const AdminLayout = () => {
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(9, 13, 26, 0.6);
+            backdrop-filter: blur(4px);
             z-index: 40;
           }
 
           .admin-main {
-            margin-top: 60px; /* Offset for mobile header */
+            margin-top: 56px; /* Offset for mobile header */
           }
           
           .admin-content-wrapper {
-            padding: 1.5rem;
+            padding: 1.5rem 1rem;
           }
         }
       `}</style>

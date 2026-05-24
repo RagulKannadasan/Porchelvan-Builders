@@ -355,3 +355,313 @@ h1, h2, h3, h4 {
     font-size: 1.1rem;
   }
 }
+
+/* 
+  PREMIUM POPUP WINDOW DIALOG STYLING
+  Simulates a clean, modern macOS/Windows-style popup window with high-end spring-like scale animation, glassmorphism backdrop, and generous layout spacing.
+*/
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(15, 23, 42, 0.45) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 2000 !important; /* Ensure it floats above absolutely everything */
+  opacity: 0;
+  animation: modalFadeIn 0.25s ease-out forwards !important;
+}
+
+.modal {
+  background: var(--admin-surface, #ffffff) !important;
+  color: var(--admin-text, #0f172a) !important;
+  border: 1px solid var(--admin-border, #e2e8f0) !important;
+  border-radius: 16px !important;
+  width: 90% !important;
+  max-width: 520px !important;
+  padding: 2.25rem !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.2), 0 0 0 1px rgba(15, 23, 42, 0.03) !important;
+  transform: scale(0.9) translateY(10px);
+  animation: modalScaleSpring 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+  overflow-y: auto !important;
+  max-height: 90vh !important;
+  transition: background-color 0.3s, border-color 0.3s, color 0.3s !important;
+}
+
+[data-theme='dark'] .modal {
+  background: #111827 !important;
+  border-color: #1f2937 !important;
+  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+.modal-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 1.75rem !important;
+  padding-bottom: 1rem !important;
+  border-bottom: 1px solid var(--admin-border, #e2e8f0) !important;
+}
+
+[data-theme='dark'] .modal-header {
+  border-bottom-color: #1f2937 !important;
+}
+
+.modal-header h2 {
+  font-size: 1.25rem !important;
+  font-weight: 800 !important;
+  color: var(--admin-text, #0f172a) !important;
+  margin: 0 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* Premium Form Group Enhancements inside Popups */
+.modal form {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.25rem !important;
+}
+
+.modal .form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  margin-bottom: 0 !important; /* Managed by form gap */
+}
+
+.modal label {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--admin-text-muted, #64748b) !important;
+}
+
+.modal input[type="text"],
+.modal input[type="number"],
+.modal input[type="email"],
+.modal input[type="date"],
+.modal select,
+.modal textarea {
+  width: 100% !important;
+  padding: 0.75rem 1rem !important;
+  border: 1px solid var(--admin-border, #e2e8f0) !important;
+  background-color: var(--admin-bg, #f8fafc) !important;
+  color: var(--admin-text, #0f172a) !important;
+  border-radius: 8px !important;
+  font-family: inherit !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+  outline: none !important;
+}
+
+[data-theme='dark'] .modal input,
+[data-theme='dark'] .modal select,
+[data-theme='dark'] .modal textarea {
+  border-color: #1f2937 !important;
+  background-color: #090d1a !important;
+}
+
+.modal input:focus,
+.modal select:focus,
+.modal textarea:focus {
+  border-color: var(--brand-indigo, #1e3a8a) !important;
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.08) !important;
+  background-color: var(--admin-surface, #ffffff) !important;
+}
+
+.modal .btn-primary,
+.modal button[type="submit"] {
+  background: var(--brand-indigo, #1e3a8a) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  padding: 0.85rem 1.5rem !important;
+  border-radius: 8px !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  margin-top: 0.75rem !important;
+}
+
+.modal .btn-primary:hover,
+.modal button[type="submit"]:hover {
+  background: #1d4ed8 !important; /* Slightly lighter royal blue */
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15) !important;
+}
+
+.modal .btn-icon {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background-color: var(--admin-bg, #f8fafc) !important;
+  border: 1px solid var(--admin-border, #e2e8f0) !important;
+  color: var(--admin-text-muted, #64748b) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+[data-theme='dark'] .modal .btn-icon {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+.modal .btn-icon:hover {
+  background-color: #ef4444 !important;
+  color: white !important;
+  border-color: #ef4444 !important;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScaleSpring {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 
+  UNIVERSAL WEB APPLICATION ANIMATION SUITE
+  Highly-optimized CSS transition tokens, staggered keyframe delays, scroll-reveal transitions, and dynamic micro-animations.
+*/
+
+/* 1. Global Spring Transitions for Elements */
+button, 
+a, 
+input, 
+select, 
+textarea, 
+.card, 
+.stat-card, 
+.admin-nav-item, 
+.minimal-card, 
+.stat-item, 
+.log-row, 
+.btn-install-app {
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 2. Micro-Interaction Hover Transitions */
+.hover-float {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.28s ease !important;
+}
+
+.hover-float:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 16px 32px -10px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* 3. Animation Classes */
+.animate-fade-in {
+  animation: appFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.animate-fade-in-up {
+  opacity: 0;
+  animation: appFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.animate-fade-in-down {
+  opacity: 0;
+  animation: appFadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.animate-fade-in-left {
+  opacity: 0;
+  animation: appFadeInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.animate-fade-in-right {
+  opacity: 0;
+  animation: appFadeInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.animate-pulse-soft {
+  animation: appPulseSoft 2s infinite ease-in-out !important;
+}
+
+/* 4. Sequential Stagger Delay Helpers */
+.delay-100 { animation-delay: 100ms !important; }
+.delay-200 { animation-delay: 200ms !important; }
+.delay-300 { animation-delay: 300ms !important; }
+.delay-400 { animation-delay: 400ms !important; }
+.delay-500 { animation-delay: 500ms !important; }
+
+/* 5. Keyframe Core Engines */
+@keyframes appFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes appFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes appFadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes appFadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes appFadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes appPulseSoft {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(0.98);
+  }
+}
