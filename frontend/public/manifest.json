@@ -1,0 +1,17 @@
+{
+  "short_name": "Porchelvan",
+  "name": "Porchelvan Builders Admin & Portal",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "type": "image/png",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#F8FAFC",
+  "theme_color": "#1E3A8A",
+  "display": "standalone",
+  "orientation": "portrait"
+}
