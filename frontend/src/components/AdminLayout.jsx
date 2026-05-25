@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, HardHat, DollarSign, Users, Package, Calendar, Settings, Home, ShieldAlert, Download, User } from 'lucide-react';
+import { Menu, X, LayoutDashboard, HardHat, DollarSign, Users, Package, Calendar, Settings, Home, ShieldAlert, Download, User, MessageSquare } from 'lucide-react';
 import '../index.css';
 
 const AdminLayout = () => {
@@ -15,6 +15,7 @@ const AdminLayout = () => {
     { name: 'Inventory', path: '/admin/inventory', icon: <Package size={20} /> },
     { name: 'Scheduling', path: '/admin/scheduling', icon: <Calendar size={20} /> },
     { name: 'Issues & Vault', path: '/admin/issues', icon: <ShieldAlert size={20} /> },
+    { name: 'Client Messages', path: '/admin/messages', icon: <MessageSquare size={20} /> },
     { name: 'Settings', path: '/admin/settings', icon: <Settings size={20} /> },
   ];
 
@@ -40,11 +41,8 @@ const AdminLayout = () => {
       <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
           <div className="admin-logo-section">
-            <div className="logo-mark">PB</div>
-            <div className="logo-text-block">
-              <span className="logo-text">Porchelvan</span>
-              <span className="logo-subtext">BUILDERS</span>
-            </div>
+            <div className="logo-box">P</div>
+            <span className="logo-text" style={{letterSpacing: '-0.3px', marginLeft: '0.6rem'}}>Porchelvan Builders</span>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="close-btn-mobile">
             <X size={24} />
@@ -101,27 +99,26 @@ const AdminLayout = () => {
           Inspired by Modern Dashboard Color Science & Layouts
         */
         :root {
-          --admin-bg: #F8FAFC;         /* Soft warm Slate-Grey */
-          --admin-surface: #FFFFFF;    /* Pure White */
-          --admin-border: #E2E8F0;     /* Ultra subtle border */
-          --admin-text: #0F172A;       /* Slate 900 */
-          --admin-text-muted: #64748B; /* Slate 500 */
-          --admin-hover: #F1F5F9;      /* Slate 100 */
-          --brand-indigo: #1E3A8A;     /* Premium Deep Indigo */
-          --brand-orange: #F97316;     /* Vibrant Safety Orange */
-          --brand-orange-light: #FFedd5;
-          --gradient-brand: linear-gradient(135deg, var(--brand-indigo) 0%, #3B82F6 100%);
+          --admin-bg: #F8FAFC;         
+          --admin-surface: #FFFFFF;    
+          --admin-border: #E2E8F0;     
+          --admin-text: #0F172A;       
+          --admin-text-muted: #64748B; 
+          --admin-hover: #F1F5F9;      
+          --brand-orange: #F97316;     
+          --brand-orange-light: rgba(249,115,22,0.1);
+          --gradient-brand: var(--brand-orange);
           --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02);
         }
 
         [data-theme='dark'] {
-          --admin-bg: #090D1A;         /* Deep Obsidian-Navy */
-          --admin-surface: #111827;    /* Charcoal-Navy */
-          --admin-border: #1F2937;     /* Dark Border */
-          --admin-text: #F9FAFB;       /* Pure White */
-          --admin-text-muted: #9CA3AF; /* Grey 400 */
-          --admin-hover: #1F2937;      /* Dark Hover */
-          --brand-orange-light: #372217;
+          --admin-bg: #000000;         
+          --admin-surface: #111111;    
+          --admin-border: #1A1A1A;     
+          --admin-text: #E2E8F0;       
+          --admin-text-muted: rgba(226,232,240,0.5); 
+          --admin-hover: #161616;      
+          --brand-orange-light: rgba(249,115,22,0.15);
           --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
         }
 
@@ -158,7 +155,7 @@ const AdminLayout = () => {
         }
 
         .logo-mark-sm {
-          background: linear-gradient(135deg, var(--brand-indigo) 0%, var(--brand-orange) 100%);
+          background: var(--brand-orange);
           color: white;
           width: 32px;
           height: 32px;
@@ -213,39 +210,17 @@ const AdminLayout = () => {
           gap: 0.75rem;
         }
 
-        .logo-mark {
-          background: linear-gradient(135deg, var(--brand-indigo) 0%, var(--brand-orange) 100%);
-          color: white;
-          width: 38px;
-          height: 38px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 800;
-          font-size: 1.15rem;
-          box-shadow: 0 4px 10px rgba(30, 58, 138, 0.2);
-        }
-
-        .logo-text-block {
-          display: flex;
-          flex-direction: column;
+        .logo-box {
+          width: 36px; height: 36px; background: var(--brand-orange);
+          border-radius: 8px; display: flex; align-items: center; justify-content: center;
+          font-weight: 800; font-size: 1rem; color: #fff; flex-shrink: 0;
         }
 
         .logo-text {
-          font-size: 1.1rem;
-          font-weight: 800;
+          font-size: 1.05rem;
+          font-weight: 700;
           color: var(--admin-text);
-          letter-spacing: -0.5px;
           line-height: 1.2;
-        }
-
-        .logo-subtext {
-          font-size: 0.65rem;
-          font-weight: 800;
-          letter-spacing: 1.5px;
-          color: var(--brand-orange);
-          margin-top: 1px;
         }
 
         .close-btn-mobile {
@@ -280,7 +255,7 @@ const AdminLayout = () => {
         .profile-avatar {
           width: 44px;
           height: 44px;
-          background: linear-gradient(135deg, var(--brand-indigo) 0%, #3B82F6 100%);
+          background: var(--brand-orange);
           color: white;
           border-radius: 50%;
           display: flex;
@@ -288,7 +263,7 @@ const AdminLayout = () => {
           justify-content: center;
           font-weight: 700;
           font-size: 0.95rem;
-          box-shadow: 0 4px 8px rgba(30, 58, 138, 0.15);
+          box-shadow: 0 4px 8px rgba(249, 115, 22, 0.15);
         }
 
         .profile-text-info {
@@ -343,8 +318,8 @@ const AdminLayout = () => {
           display: flex;
           align-items: center;
           gap: 0.85rem;
-          padding: 0.65rem 0.85rem;
-          border-radius: 10px;
+          padding: 0.65rem 1.25rem;
+          border-radius: 50px;
           color: var(--admin-text-muted);
           text-decoration: none;
           transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -387,8 +362,8 @@ const AdminLayout = () => {
 
         /* Active Selection */
         .admin-nav-item.active {
-          background-color: var(--brand-indigo);
-          box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+          background-color: var(--brand-orange);
+          box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
         }
 
         .admin-nav-item.active .nav-icon-wrapper {
@@ -400,17 +375,7 @@ const AdminLayout = () => {
           font-weight: 700;
         }
 
-        /* Left Orange Accent on Active */
-        .admin-nav-item.active::before {
-          content: '';
-          position: absolute;
-          left: -4px;
-          top: 25%;
-          height: 50%;
-          width: 4px;
-          background-color: var(--brand-orange);
-          border-radius: 0 4px 4px 0;
-        }
+        /* Left Accent Removed for Pill Style */
 
         .admin-nav-divider {
           height: 1px;

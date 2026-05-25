@@ -1,30 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Users, FileText, AlertTriangle, RefreshCw, Database, Layers, CheckCircle } from 'lucide-react';
+import API_BASE_URL from '../../utils/api';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
     activeProjects: 0,
     totalWorkers: 0,
     pendingInvoices: 0,
-    openIssues: 0
+    openIssues: 0,
+    recentLogs: [],
+    designationMix: { supervisors: 0, masons: 0, laborers: 0 }
   });
 
   const [refreshing, setRefreshing] = useState(false);
 
+  const fetchStats = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/dashboard/stats`);
+      if (res.ok) {
+        const data = await res.json();
+        setStats(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch dashboard stats", err);
+    } finally {
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 500);
+    }
+  };
+
   useEffect(() => {
-    setStats({
-      activeProjects: 4,
-      totalWorkers: 124,
-      pendingInvoices: 7,
-      openIssues: 2
-    });
+    fetchStats();
   }, []);
 
   const handleRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 600);
+    fetchStats();
   };
 
   return (
@@ -81,9 +93,9 @@ const Dashboard = () => {
             </div>
             <div className="card-body">
               <div className="mix-list">
-                <MinimalProgressRow label="Supervisors" count={8} percentage={53} />
-                <MinimalProgressRow label="Masons" count={76} percentage={76} />
-                <MinimalProgressRow label="Laborers" count={40} percentage={40} />
+                <MinimalProgressRow label="Supervisors" count={stats.designationMix.supervisors} percentage={stats.totalWorkers > 0 ? (stats.designationMix.supervisors / stats.totalWorkers) * 100 : 0} />
+                <MinimalProgressRow label="Masons" count={stats.designationMix.masons} percentage={stats.totalWorkers > 0 ? (stats.designationMix.masons / stats.totalWorkers) * 100 : 0} />
+                <MinimalProgressRow label="Laborers" count={stats.designationMix.laborers} percentage={stats.totalWorkers > 0 ? (stats.designationMix.laborers / stats.totalWorkers) * 100 : 0} />
               </div>
             </div>
           </div>
@@ -96,9 +108,19 @@ const Dashboard = () => {
             </div>
             <div className="card-body">
               <div className="log-list">
-                <LogItem project="Skyline Residences" site="Vandalur" workers={28} status="Active" />
-                <LogItem project="Tech Hub Office" site="OMR" workers={42} status="Active" />
-                <LogItem project="Heritage Villa" site="ECR" workers={15} status="Stable" />
+                {stats.recentLogs.length > 0 ? (
+                  stats.recentLogs.map((log) => (
+                    <LogItem 
+                      key={log._id} 
+                      project={log.title} 
+                      site={log.location || 'Unknown'} 
+                      workers={0} 
+                      status={log.status} 
+                    />
+                  ))
+                ) : (
+                  <div style={{ color: 'var(--admin-text-muted)', fontSize: '0.85rem' }}>No recent projects.</div>
+                )}
               </div>
             </div>
           </div>

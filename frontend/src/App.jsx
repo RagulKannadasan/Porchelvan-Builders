@@ -11,6 +11,7 @@ import Inventory from './pages/admin/Inventory';
 import Scheduling from './pages/admin/Scheduling';
 import IssuesVault from './pages/admin/IssuesVault';
 import Settings from './pages/admin/Settings';
+import Messages from './pages/admin/Messages';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="scheduling" element={<Scheduling />} />
           <Route path="issues" element={<IssuesVault />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="messages" element={<Messages />} />
           {/* Add more admin routes here later */}
         </Route>
       </Routes>

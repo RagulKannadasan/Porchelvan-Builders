@@ -102,6 +102,17 @@ const vaultDocumentSchema = new mongoose.Schema({
 }, { timestamps: true });
 const VaultDocument = mongoose.model('VaultDocument', vaultDocumentSchema);
 
+const inquirySchema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
+    email: String,
+    phone: String,
+    projectType: String,
+    message: String,
+    status: { type: String, enum: ['New', 'Contacted', 'Archived'], default: 'New' }
+}, { timestamps: true });
+const Inquiry = mongoose.model('Inquiry', inquirySchema);
+
 // --- PROJECT ROUTES ---
 app.get('/api/projects', async (req, res) => {
     try {
@@ -409,6 +420,70 @@ app.delete('/api/vault/:id', async (req, res) => {
         res.json({ message: "Document deleted" });
     } catch (err) {
         res.status(500).json({ error: "Failed to delete document" });
+    }
+});
+
+// --- INQUIRIES ROUTES ---
+app.get('/api/inquiries', async (req, res) => {
+    try {
+        const inquiries = await Inquiry.find().sort({ createdAt: -1 });
+        res.json(inquiries);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch inquiries" });
+    }
+});
+
+app.post('/api/inquiries', async (req, res) => {
+    try {
+        const newInquiry = new Inquiry(req.body);
+        await newInquiry.save();
+        res.status(201).json(newInquiry);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to submit inquiry" });
+    }
+});
+
+app.put('/api/inquiries/:id', async (req, res) => {
+    try {
+        const updated = await Inquiry.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true });
+        res.json(updated);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to update inquiry" });
+    }
+});
+
+app.delete('/api/inquiries/:id', async (req, res) => {
+    try {
+        await Inquiry.findByIdAndDelete(req.params.id);
+        res.json({ message: "Inquiry deleted" });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to delete inquiry" });
+    }
+});
+// --- DASHBOARD STATS ROUTE ---
+app.get('/api/dashboard/stats', async (req, res) => {
+    try {
+        const activeProjects = await Project.countDocuments({ status: { $in: ['Ongoing', 'Upcoming'] } });
+        const totalWorkers = await Crew.countDocuments();
+        const pendingInvoices = await Invoice.countDocuments({ status: 'Unpaid' });
+        const openIssues = await Issue.countDocuments({ status: 'Open' });
+        const recentLogs = await Project.find().sort({ createdAt: -1 }).limit(3);
+        
+        // Count roles for Designation Mix
+        const supervisors = await Crew.countDocuments({ role: { $regex: /supervisor|manager/i } });
+        const masons = await Crew.countDocuments({ role: { $regex: /mason/i } });
+        const laborers = await Crew.countDocuments({ role: { $regex: /laborer|labour/i } });
+        
+        res.json({
+            activeProjects,
+            totalWorkers,
+            pendingInvoices,
+            openIssues,
+            recentLogs,
+            designationMix: { supervisors, masons, laborers }
+        });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch dashboard stats" });
     }
 });
 
