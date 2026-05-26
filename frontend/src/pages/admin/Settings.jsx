@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
-import { User, Bell, Shield, Download, Upload, Moon, Sun, Monitor } from 'lucide-react';
+import { User, Bell, Shield, Download, Upload, Moon, Sun, Monitor, Mail, Lock, Camera, Check } from 'lucide-react';
 import API_BASE_URL from '../../utils/api';
 import * as XLSX from 'xlsx';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('Profile');
   const [theme, setTheme] = useState('system'); // system, light, dark
+  const [fullName, setFullName] = useState('Admin User');
+  const [emailAddress, setEmailAddress] = useState('admin@porchelvanbuilders.com');
+  const [password, setPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const [notifications, setNotifications] = useState({
     emailAlerts: true,
     lowStock: true,
@@ -27,6 +33,30 @@ const Settings = () => {
       // System logic would go here, mock for now
       document.body.removeAttribute('data-theme');
     }
+  };
+
+  const handleSaveChanges = () => {
+    setSaving(true);
+    setSaved(false);
+    setTimeout(() => {
+      setSaving(false);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 4000);
+    }, 1000);
+  };
+
+  const triggerAvatarUpload = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        setAvatarUrl(url);
+      }
+    };
+    input.click();
   };
 
   const handleExportData = async () => {
@@ -273,25 +303,88 @@ const Settings = () => {
         {/* Content Area */}
         <div className="settings-content card">
           {activeTab === 'Profile' && (
-            <div className="settings-section">
+            <div className="settings-section animate-fade-in-up">
               <h2>Admin Profile</h2>
               <p className="text-muted" style={{ marginBottom: '2rem' }}>Update your personal information and login credentials.</p>
               
+              {saved && (
+                <div className="success-toast">
+                  <Check size={18} />
+                  <span>Your profile changes have been saved successfully!</span>
+                </div>
+              )}
+
+              <div className="profile-avatar-section">
+                <div className="avatar-container">
+                  <div className="avatar-preview">
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt="Avatar Preview" />
+                    ) : (
+                      fullName ? fullName.split(' ').filter(Boolean).map(n => n[0]).join('').toUpperCase() : 'A'
+                    )}
+                  </div>
+                  <div className="avatar-upload-badge" onClick={triggerAvatarUpload} title="Upload New Photo">
+                    <Camera size={16} />
+                  </div>
+                </div>
+                <div className="avatar-actions-text">
+                  <h3>Profile Avatar</h3>
+                  <p className="text-muted" style={{ fontSize: '0.85rem', margin: '0 0 0.75rem 0' }}>Allowed formats: JPG, PNG. Max size 2MB.</p>
+                  <button className="btn-upload-avatar" onClick={triggerAvatarUpload}>
+                    <Upload size={14} /> Upload New Photo
+                  </button>
+                </div>
+              </div>
+
               <div className="form-row">
                 <div className="form-group">
                   <label>Full Name</label>
-                  <input type="text" defaultValue="Admin User" />
+                  <div className="input-wrapper">
+                    <input 
+                      type="text" 
+                      value={fullName} 
+                      onChange={(e) => setFullName(e.target.value)} 
+                    />
+                    <User size={18} className="input-icon" />
+                  </div>
                 </div>
                 <div className="form-group">
                   <label>Email Address</label>
-                  <input type="email" defaultValue="admin@porchelvanbuilders.com" />
+                  <div className="input-wrapper">
+                    <input 
+                      type="email" 
+                      value={emailAddress} 
+                      onChange={(e) => setEmailAddress(e.target.value)} 
+                    />
+                    <Mail size={18} className="input-icon" />
+                  </div>
                 </div>
               </div>
               <div className="form-group">
                 <label>Change Password</label>
-                <input type="password" placeholder="Enter new password" />
+                <div className="input-wrapper">
+                  <input 
+                    type="password" 
+                    placeholder="Enter new password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <Lock size={18} className="input-icon" />
+                </div>
               </div>
-              <button className="btn btn-primary">Save Changes</button>
+              <button 
+                className="btn btn-primary" 
+                onClick={handleSaveChanges} 
+                disabled={saving}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', minWidth: '150px', justifyContent: 'center' }}
+              >
+                {saving ? (
+                  <>
+                    <span className="spinner-loader"></span>
+                    Saving...
+                  </>
+                ) : 'Save Changes'}
+              </button>
             </div>
           )}
 
@@ -431,6 +524,7 @@ const Settings = () => {
           display: flex;
           flex-direction: column;
           padding: 1rem !important;
+          gap: 0.35rem;
         }
 
         .nav-btn {
@@ -439,35 +533,231 @@ const Settings = () => {
           gap: 0.75rem;
           background: none;
           border: none;
-          padding: 0.75rem 1rem;
+          padding: 0.75rem 1.25rem;
           color: var(--admin-text-muted);
-          font-weight: 500;
+          font-weight: 600;
           font-size: 0.95rem;
           cursor: pointer;
-          border-radius: 6px;
+          border-radius: 50px;
           text-align: left;
-          transition: all 0.2s;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .nav-btn:hover {
           background: var(--admin-hover);
           color: var(--admin-text);
+          transform: translateX(3px);
         }
 
         .nav-btn.active {
-          background: var(--gradient-brand);
+          background: var(--brand-orange, #F97316);
           color: white;
+          box-shadow: 0 4px 12px rgba(249, 115, 22, 0.15);
         }
 
         .settings-content {
           padding: 2.5rem !important;
           min-height: 500px;
+          border-radius: 16px !important;
+          box-shadow: var(--card-shadow);
         }
 
         .settings-section h2 {
           margin-top: 0;
           margin-bottom: 0.5rem;
-          font-size: 1.5rem;
+          font-size: 1.6rem;
+          font-weight: 800;
+          letter-spacing: -0.02em;
+        }
+
+        /* Premium Forms inside Settings */
+        .form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1.5rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          margin-bottom: 1.5rem;
+        }
+
+        label {
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: var(--admin-text-muted);
+        }
+
+        .input-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+
+        .input-icon {
+          position: absolute;
+          left: 1rem;
+          color: var(--admin-text-muted);
+          pointer-events: none;
+          transition: color 0.2s;
+        }
+
+        .input-wrapper input {
+          width: 100%;
+          padding: 0.85rem 1rem 0.85rem 2.75rem;
+          border: 1px solid var(--admin-border);
+          background-color: var(--admin-bg);
+          color: var(--admin-text);
+          border-radius: 10px;
+          font-family: inherit;
+          font-size: 0.95rem;
+          font-weight: 500;
+          transition: all 0.25s ease;
+          outline: none;
+        }
+
+        .input-wrapper input:focus {
+          border-color: var(--brand-orange, #F97316);
+          box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.1);
+          background-color: var(--admin-surface);
+        }
+
+        .input-wrapper input:focus + .input-icon {
+          color: var(--brand-orange, #F97316);
+        }
+
+        /* Avatar Section */
+        .profile-avatar-section {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+          padding: 1.5rem;
+          background: linear-gradient(135deg, rgba(249, 115, 22, 0.03) 0%, rgba(249, 115, 22, 0.08) 100%);
+          border: 1px solid var(--admin-border);
+          border-radius: 12px;
+          margin-bottom: 2rem;
+        }
+
+        .avatar-container {
+          position: relative;
+          width: 90px;
+          height: 90px;
+        }
+
+        .avatar-preview {
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, var(--brand-orange, #F97316) 0%, #EA580C 100%);
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.8rem;
+          font-weight: 800;
+          box-shadow: 0 8px 24px rgba(249, 115, 22, 0.2);
+          border: 4px solid var(--admin-surface);
+          overflow: hidden;
+        }
+
+        .avatar-preview img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 50%;
+        }
+
+        .avatar-upload-badge {
+          position: absolute;
+          bottom: -2px;
+          right: -2px;
+          background: var(--admin-surface);
+          border: 1px solid var(--admin-border);
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: var(--admin-text);
+          box-shadow: var(--card-shadow);
+          transition: all 0.2s;
+        }
+
+        .avatar-upload-badge:hover {
+          background: var(--brand-orange, #F97316);
+          color: white;
+          border-color: var(--brand-orange, #F97316);
+          transform: scale(1.1);
+        }
+
+        .avatar-actions-text h3 {
+          margin: 0 0 0.25rem 0;
+          font-size: 1.15rem;
+          font-weight: 700;
+        }
+
+        .btn-upload-avatar {
+          background: var(--admin-surface);
+          border: 1px solid var(--admin-border);
+          color: var(--admin-text);
+          font-weight: 600;
+          font-size: 0.85rem;
+          padding: 0.5rem 1rem;
+          border-radius: 20px;
+          cursor: pointer;
+          transition: all 0.2s;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .btn-upload-avatar:hover {
+          background: var(--admin-hover);
+          border-color: var(--admin-text-muted);
+        }
+
+        /* Success Alert */
+        .success-toast {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          background: #DCFCE7;
+          border: 1px solid #BBF7D0;
+          color: #15803D;
+          padding: 1rem 1.25rem;
+          border-radius: 10px;
+          margin-bottom: 1.5rem;
+          font-weight: 600;
+          font-size: 0.95rem;
+        }
+
+        [data-theme='dark'] .success-toast {
+          background: rgba(21, 128, 61, 0.15);
+          border-color: rgba(21, 128, 61, 0.3);
+          color: #4ade80;
+        }
+
+        /* Spinner Loader */
+        .spinner-loader {
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
+          border-top: 2px solid #ffffff;
+          width: 16px;
+          height: 16px;
+          animation: spin-loader-anim 0.8s linear infinite;
+          display: inline-block;
+        }
+
+        @keyframes spin-loader-anim {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
         /* Theme Cards */
@@ -480,41 +770,46 @@ const Settings = () => {
         .theme-card {
           background: var(--admin-bg);
           border: 2px solid var(--admin-border);
-          border-radius: 8px;
+          border-radius: 12px;
           padding: 2rem 1rem;
           display: flex;
           flex-direction: column;
           align-items: center;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .theme-card:hover {
-          border-color: var(--color-indigo);
+          border-color: var(--brand-orange, #F97316);
+          transform: translateY(-3px);
         }
 
         .theme-card.active {
-          border-color: var(--color-orange);
-          background: rgba(241, 90, 36, 0.05);
+          border-color: var(--brand-orange, #F97316);
+          background: var(--brand-orange-light, rgba(249, 115, 22, 0.05));
+          box-shadow: 0 4px 12px rgba(249, 115, 22, 0.05);
         }
 
         /* Toggles */
         .toggle-list {
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 1rem;
         }
 
         .toggle-item {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding-bottom: 1.5rem;
-          border-bottom: 1px solid var(--admin-border);
+          padding: 1.25rem;
+          border: 1px solid var(--admin-border);
+          border-radius: 12px;
+          transition: all 0.2s;
         }
-        .toggle-item:last-child {
-          border-bottom: none;
-          padding-bottom: 0;
+
+        .toggle-item:hover {
+          background-color: var(--admin-hover);
+          border-color: var(--admin-text-muted);
         }
 
         .switch {
@@ -553,11 +848,11 @@ const Settings = () => {
         }
 
         input:checked + .slider {
-          background-color: var(--color-indigo);
+          background-color: var(--brand-orange, #F97316);
         }
 
         input:focus + .slider {
-          box-shadow: 0 0 1px var(--color-indigo);
+          box-shadow: 0 0 1px var(--brand-orange, #F97316);
         }
 
         input:checked + .slider:before {
@@ -581,16 +876,24 @@ const Settings = () => {
 
         .data-card {
           border: 1px solid var(--admin-border);
-          border-radius: 8px;
-          padding: 1.5rem;
+          border-radius: 12px;
+          padding: 1.75rem;
           display: flex;
-          gap: 1rem;
+          gap: 1.25rem;
+          background: var(--admin-surface);
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .data-card:hover {
+          transform: translateY(-3px);
+          box-shadow: var(--card-shadow);
+          border-color: var(--admin-text-muted);
         }
 
         .data-icon {
-          width: 48px;
-          height: 48px;
-          border-radius: 12px;
+          width: 52px;
+          height: 52px;
+          border-radius: 14px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -599,7 +902,16 @@ const Settings = () => {
 
         .data-info h3 {
           margin: 0 0 0.5rem 0;
-          font-size: 1.1rem;
+          font-size: 1.15rem;
+          font-weight: 700;
+        }
+
+        .btn-sm {
+          padding: 0.5rem 1rem;
+          font-size: 0.85rem;
+          display: inline-flex;
+          align-items: center;
+          border-radius: 20px;
         }
 
         @media (max-width: 900px) {
@@ -608,6 +920,10 @@ const Settings = () => {
           }
           .theme-options, .data-actions {
             grid-template-columns: 1fr;
+          }
+          .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
           }
         }
       `}</style>

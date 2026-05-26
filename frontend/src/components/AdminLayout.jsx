@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, HardHat, DollarSign, Users, Package, Calendar, Settings, Home, ShieldAlert, Download, User, MessageSquare, CreditCard } from 'lucide-react';
+import { Menu, X, LayoutDashboard, HardHat, DollarSign, Users, Package, Calendar, Settings, Home, ShieldAlert, User, MessageSquare, CreditCard } from 'lucide-react';
 import '../index.css';
 
 const AdminLayout = () => {
@@ -76,15 +76,7 @@ const AdminLayout = () => {
           </Link>
         </nav>
 
-        {/* Install App Button */}
-        <div className="admin-sidebar-footer">
-          <button className="btn-install-app" onClick={() => alert('App Installation Initiated!')}>
-            <Download size={16} />
-            <div className="install-text">
-              <span className="install-en">Install App</span>
-            </div>
-          </button>
-        </div>
+
       </aside>
 
       {/* Main Content Area */}
@@ -394,51 +386,7 @@ const AdminLayout = () => {
           color: var(--brand-orange);
         }
 
-        /* Sidebar Footer Install Button */
-        .admin-sidebar-footer {
-          padding: 1.25rem;
-          border-top: 1px solid var(--admin-border);
-        }
 
-        .btn-install-app {
-          width: 100%;
-          background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-          border: 1px solid rgba(0, 0, 0, 0.05);
-          color: #0F172A;
-          padding: 0.75rem 1rem;
-          border-radius: 50px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.75rem;
-          cursor: pointer;
-          font-weight: 700;
-          box-shadow: 0 4px 14px rgba(255, 165, 0, 0.25);
-          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-install-app:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(255, 165, 0, 0.35);
-        }
-
-        .btn-install-app svg {
-          flex-shrink: 0;
-        }
-
-        .install-text {
-          display: flex;
-          flex-direction: column;
-          text-align: left;
-          min-width: 0;
-        }
-
-        .install-en {
-          font-size: 0.8rem;
-          font-weight: 800;
-          line-height: 1.2;
-          letter-spacing: -0.2px;
-        }
 
         /* Main Content */
         .admin-main {

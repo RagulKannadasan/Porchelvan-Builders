@@ -86,7 +86,7 @@ const Crew = () => {
           </div>
         ) : (
           crewList.map(member => (
-            <div key={member._id} className="crew-card">
+            <div key={member.id || member._id} className="crew-card">
               <div className="crew-card-header">
                 <div className="crew-avatar">
                   {member.name.charAt(0).toUpperCase()}
@@ -95,7 +95,7 @@ const Crew = () => {
                   <h3>{member.name}</h3>
                   <span className="badge-outline">{member.role}</span>
                 </div>
-                <button className="btn-icon delete-btn" onClick={() => handleDeleteCrew(member._id)}>
+                <button className="btn-icon delete-btn" onClick={() => handleDeleteCrew(member.id || member._id)}>
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -107,12 +107,12 @@ const Crew = () => {
                 <div className="assignment-section">
                   <label><Briefcase size={14}/> Current Assignment</label>
                   <select 
-                    value={member.currentProject?._id || ''} 
-                    onChange={(e) => handleUpdateAssignment(member._id, e.target.value)}
+                    value={member.currentProject?.id || member.currentProject?._id || ''} 
+                    onChange={(e) => handleUpdateAssignment(member.id || member._id, e.target.value)}
                   >
                     <option value="">-- Unassigned (Bench) --</option>
                     {projects.filter(p => p.status !== 'Completed').map(p => (
-                      <option key={p._id} value={p._id}>{p.title}</option>
+                      <option key={p.id || p._id} value={p.id || p._id}>{p.title}</option>
                     ))}
                   </select>
                 </div>
@@ -156,7 +156,7 @@ const Crew = () => {
                 <select value={newCrew.currentProject} onChange={e => setNewCrew({...newCrew, currentProject: e.target.value})}>
                   <option value="">-- Unassigned --</option>
                   {projects.filter(p => p.status !== 'Completed').map(p => (
-                    <option key={p._id} value={p._id}>{p.title}</option>
+                    <option key={p.id || p._id} value={p.id || p._id}>{p.title}</option>
                   ))}
                 </select>
               </div>

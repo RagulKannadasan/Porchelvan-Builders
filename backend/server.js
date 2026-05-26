@@ -178,7 +178,7 @@ app.get('/api/crew', async (req, res) => {
         `;
         const formatted = crew.map(c => ({
             ...c,
-            currentProject: c.currentProject ? { _id: c.currentProject, title: c.projectTitle } : null
+            currentProject: c.currentProject ? { id: c.currentProject, _id: c.currentProject, title: c.projectTitle } : null
         }));
         res.json(formatted);
     } catch (err) {
@@ -200,7 +200,7 @@ app.post('/api/crew', async (req, res) => {
         
         if (newCrew.currentProject) {
             const [proj] = await sql`SELECT title FROM projects WHERE id = ${newCrew.currentProject}`;
-            newCrew.currentProject = { _id: newCrew.currentProject, title: proj.title };
+            newCrew.currentProject = { id: newCrew.currentProject, _id: newCrew.currentProject, title: proj.title };
         } else {
             newCrew.currentProject = null;
         }
@@ -225,7 +225,7 @@ app.put('/api/crew/:id', async (req, res) => {
         
         if (updated.currentProject) {
             const [proj] = await sql`SELECT title FROM projects WHERE id = ${updated.currentProject}`;
-            updated.currentProject = { _id: updated.currentProject, title: proj.title };
+            updated.currentProject = { id: updated.currentProject, _id: updated.currentProject, title: proj.title };
         } else {
             updated.currentProject = null;
         }
