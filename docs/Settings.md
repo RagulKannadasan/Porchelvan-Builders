@@ -33,12 +33,14 @@ The **System Settings** manager controls visual preferences, notification toggle
   * **New Issues Logged**: Triggers for snag reports.
   * **Daily Digest**: Nightly construction summaries.
 
-### 4. Data Backup Management (JSON Exporter/Importer)
-An operational backup recovery vault to preserve data and manage the 512 MB storage limit:
-* **JSON Exporter**: Orchestrates concurrent `Promise.all` fetches across 6 primary collections:
-  * `projects`, `crew`, `inventory`, `schedule`, `issues`, and `vault`.
-  * Generates and downloads a timestamped backup file: `porchelvan_builders_backup_YYYY-MM-DD.json`.
-* **JSON Importer**: Allows users to select a JSON file. Automatically parses and cleans metadata (`_id`, `__v`), then runs sequential `POST` queries to restore databases seamlessly.
+### 4. Data Backup & Report Management (JSON & Excel Exporters)
+An operational backup and reporting vault to preserve records, analyze statistics, and manage the 512 MB Atlas database limits:
+* **JSON Exporter**: Orchestrates concurrent `Promise.all` fetches across 6 primary collections (`projects`, `crew`, `inventory`, `schedule`, `issues`, `vault`) and package them into a timestamped file: `porchelvan_builders_backup_YYYY-MM-DD.json`.
+* **JSON Importer**: Parses selected JSON backup files, automatically cleans database specific parameters (`_id`, `__v`, `id`), and runs batch sequential `POST` queries to restore systems.
+* **Excel Exporter**: Downloads a multi-sheet spreadsheet file: `porchelvan_builders_export_YYYY-MM-DD.xlsx`. 
+  * Automatically creates a separate tab for each database collection (**Projects**, **Crew**, **Inventory**, **Schedule**, **Issues**, **Vault**).
+  * **Relational Flatting**: Resolves Mongoose object IDs and references to human-readable strings (e.g. converting a project object reference to its clean site title, or array fields into comma-separated text) so it is instantly readable in Microsoft Excel or Google Sheets.
+  * **Sanitization**: Strips raw system internal IDs (`_id` and `__v`) for clear sheet grids.
 
 ---
 

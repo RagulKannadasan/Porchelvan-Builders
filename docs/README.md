@@ -18,6 +18,7 @@ The secure workspace containing state-of-the-art tools to manage construction, t
 * 📄 **[Dashboard Documentation](file:///home/ragul/Projects/Porchelvan-Builders/docs/Dashboard.md)**: Aggregates high-level metrics, tracks designated trades progress, shows system activity, and monitors database limits.
 * 📄 **[Projects Management Documentation](file:///home/ragul/Projects/Porchelvan-Builders/docs/Projects.md)**: Details project site creation and daily **Site Diaries (Daily Logs)** tracking completed work and weather.
 * 📄 **[Budget & Invoices Documentation](file:///home/ragul/Projects/Porchelvan-Builders/docs/Budget.md)**: Tracks finances, categorizes expenses, generates client invoices, and calculates net profitability.
+* 📄 **[Transactions Ledger Documentation](file:///home/ragul/Projects/Porchelvan-Builders/docs/Transactions.md)**: Consolidated chronological financial audit log showing outflows (Expenses) and inflows (Invoices) across all sites.
 * 📄 **[Crew & Collaborators Documentation](file:///home/ragul/Projects/Porchelvan-Builders/docs/Crew.md)**: Active workforce directory for trade classification and real-time scheduling.
 * 📄 **[Inventory Management Documentation](file:///home/ragul/Projects/Porchelvan-Builders/docs/Inventory.md)**: Manages capital equipment tracking and consumables/materials with stock warnings.
 * 📄 **[Issues & Vault Documentation](file:///home/ragul/Projects/Porchelvan-Builders/docs/IssuesVault.md)**: Quality assurance snag list defect board and secure storage vault for CAD blueprints/permits.

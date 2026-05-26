@@ -4,6 +4,8 @@ import {
   ArrowRight, Phone, Mail, Moon, Sun,
   Shield, Zap, Clock, Building, ChevronRight, Play, Menu, X
 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import House3D from '../components/House3D';
 import API_BASE_URL from '../utils/api';
 
 export default function LandingPage() {
@@ -126,9 +128,11 @@ export default function LandingPage() {
     .btn-nav:hover { opacity: 0.88; transform: translateY(-1px); }
 
     /* ── HERO ── */
-    @keyframes up { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    .hero { max-width: 1280px; margin: 0 auto; padding: 160px 2rem 100px; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
-    .hero-left { animation: up 0.7s both; }
+    .hero-wrapper { position: relative; width: 100%; min-height: 100vh; display: flex; align-items: center; overflow: hidden; padding-top: 80px; }
+    .hero-3d-bg { position: absolute; top: 0; bottom: 0; left: 0; width: 140%; z-index: 0; pointer-events: auto; }
+    .hero { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; pointer-events: none; }
+    .hero-left { pointer-events: auto; }
+    .hero-left { }
     .eyebrow {
       display: inline-flex; align-items: center; gap: 0.4rem;
       border: 1px solid var(--border); border-radius: 50px;
@@ -162,10 +166,16 @@ export default function LandingPage() {
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
     .play-circle { width: 22px; height: 22px; border-radius: 50%; background: var(--bg3); display: flex; align-items: center; justify-content: center; }
 
-    .hero-right { animation: up 0.7s 0.15s both; position: relative; }
-    .hero-img-wrap { border-radius: 20px; overflow: hidden; aspect-ratio: 4/5; box-shadow: var(--card-shadow); }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .hero-right { position: relative; }
+    .hero-img-wrap { border-radius: 20px; overflow: hidden; aspect-ratio: 4/5; box-shadow: var(--card-shadow); background: transparent; }
     .hero-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
-    .hero-img-overlay { position:absolute; inset:0; background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,0.65) 100%); border-radius:20px; }
+    .hero-img-overlay { position:absolute; inset:0; background:linear-gradient(180deg,transparent 65%,rgba(0,0,0,0.65) 100%); border-radius:20px; pointer-events:none; }
     .hero-float {
       position: absolute; top: -1rem; right: -1.5rem;
       background: var(--bg2); border: 1px solid var(--border);
@@ -302,7 +312,9 @@ export default function LandingPage() {
     .mobile-menu-links a:hover { color: var(--accent); }
 
     @media(max-width:1024px){
-      .hero { grid-template-columns:1fr; padding-top:140px; gap:3rem; }
+      .hero-wrapper { min-height: auto; flex-direction: column; padding-top: 120px; }
+      .hero { padding-top: 0; padding-bottom: 3rem; grid-template-columns:1fr; gap:3rem; }
+      .hero-3d-bg { position: relative; width: 100%; height: 50vh; top: auto; bottom: auto; left: auto; }
       .hero-right { display:none; }
       .prj-grid { grid-template-columns: repeat(2,1fr); }
       .proc-grid { grid-template-columns:1fr; }
@@ -312,6 +324,7 @@ export default function LandingPage() {
       .testi-grid { grid-template-columns:1fr; }
     }
     @media(max-width:768px){
+      .hero-3d-bg { height: 45vh; }
       .nav-links { display:none; }
       .btn-nav { display:none; }
       .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
@@ -324,7 +337,8 @@ export default function LandingPage() {
       .sec { padding: 4rem 0; }
     }
     @media(max-width:480px){
-      .hero { padding: 120px 1.5rem 60px; }
+      .hero-3d-bg { height: 40vh; }
+      .hero { padding: 0 1.5rem 3rem; }
       .hero-h1 { font-size: 2.4rem; }
       .sec-w { padding: 0 1.5rem; }
       .nav-w { padding: 0 1.5rem; }
@@ -398,50 +412,46 @@ export default function LandingPage() {
       </div>
 
       {/* ── HERO ── */}
-      <div className="hero">
-        <div className="hero-left">
-          <div className="eyebrow"><div className="eyebrow-dot"/>Thanjavur's Premier Builder</div>
-          <h1 className="hero-h1">Building Homes<br/>That <span>Last</span><br/>Generations</h1>
-          <p className="hero-p">From our roots in Thanjavur, Porchelvan Builders has become the Delta region's most trusted name in residential and commercial construction — blending craftsmanship with modern precision.</p>
-          <div className="hero-actions">
-            <button className="btn-primary">Explore Projects <ArrowRight size={15}/></button>
-            <button className="btn-outline">
-              <div className="play-circle"><Play size={10} fill="currentColor"/></div>
-              Watch Story
-            </button>
-          </div>
+      <div className="hero-wrapper">
+        <div className="hero-3d-bg">
+          <House3D />
         </div>
+        <div className="hero-3d-overlay" />
+        
+        <div className="hero">
+          <motion.div 
+            className="hero-left"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <div className="eyebrow"><div className="eyebrow-dot"/>Thanjavur's Premier Builder</div>
+            <h1 className="hero-h1">Building Homes<br/>That <span>Last</span><br/>Generations</h1>
+            <p className="hero-p">From our roots in Thanjavur, Porchelvan Builders has become the Delta region's most trusted name in residential and commercial construction — blending craftsmanship with modern precision.</p>
+            <div className="hero-actions">
+              <button className="btn-primary">Explore Projects <ArrowRight size={15}/></button>
+              <button className="btn-outline">
+                <div className="play-circle"><Play size={10} fill="currentColor"/></div>
+                Watch Story
+              </button>
+            </div>
+          </motion.div>
 
-        <div className="hero-right">
-          <div className="hero-float">
-            <strong>28<em style={{fontSize:'1.2rem',color:'var(--accent)'}}>+</em></strong>
-            <span>Years of Trust</span>
-          </div>
-          <div style={{position:'relative'}}>
-            <div className="hero-img-wrap">
-              <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=800" alt="Luxury Villa"/>
-            </div>
-            <div className="hero-img-overlay"/>
-            <div className="hero-badge">
-              <div className="avatars">
-                {['photo-1507003211169-0a1dd7228f2d','photo-1438761681033-6461ffad8d80','photo-1500648767791-00dcc994a43e'].map((id,i) => (
-                  <div key={i} className="av"><img src={`https://images.unsplash.com/${id}?q=80&w=100`} alt=""/></div>
-                ))}
-              </div>
-              <div className="badge-info">
-                <div className="badge-stars">★★★★★</div>
-                <strong>1,200+ Happy Families</strong>
-                <span>across Thanjavur & Thiruvarur</span>
-              </div>
-            </div>
-          </div>
+          {/* Right side is intentionally left empty for the 3D model to be fully visible and interactive */}
+          <div className="hero-right" />
         </div>
       </div>
 
 
       {/* ── SERVICES ── */}
       <section className="sec svc-bg">
-        <div className="sec-w">
+        <motion.div 
+          className="sec-w"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="sec-row">
             <div>
               <div className="sec-tag">What We Do</div>
@@ -458,12 +468,18 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── PROJECTS ── */}
       <section className="sec">
-        <div className="sec-w">
+        <motion.div 
+          className="sec-w"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="sec-row">
             <div>
               <div className="sec-tag">Portfolio</div>
@@ -489,12 +505,18 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── PROCESS ── */}
       <section className="sec proc-bg">
-        <div className="sec-w">
+        <motion.div 
+          className="sec-w"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="proc-grid">
             <div className="proc-img">
               <img src="https://images.unsplash.com/photo-1541888086225-f6404f456108?q=80&w=800" alt="Construction"/>
@@ -522,12 +544,18 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── TESTIMONIALS ── */}
       <section className="sec">
-        <div className="sec-w">
+        <motion.div 
+          className="sec-w"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="sec-row">
             <div>
               <div className="sec-tag">Testimonials</div>
@@ -552,12 +580,18 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── CONTACT ── */}
       <section id="contact" className="sec">
-        <div className="sec-w">
+        <motion.div 
+          className="sec-w"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+        >
           <div className="sec-row">
             <div>
               <div className="sec-tag">Contact Us</div>
@@ -634,7 +668,7 @@ export default function LandingPage() {
               </button>
             </form>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── FOOTER ── */}

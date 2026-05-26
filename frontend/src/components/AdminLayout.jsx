@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, HardHat, DollarSign, Users, Package, Calendar, Settings, Home, ShieldAlert, Download, User, MessageSquare } from 'lucide-react';
+import { Menu, X, LayoutDashboard, HardHat, DollarSign, Users, Package, Calendar, Settings, Home, ShieldAlert, Download, User, MessageSquare, CreditCard } from 'lucide-react';
 import '../index.css';
 
 const AdminLayout = () => {
@@ -11,6 +11,7 @@ const AdminLayout = () => {
     { name: 'Dashboard', path: '/admin', icon: <LayoutDashboard size={20} /> },
     { name: 'Projects & Diaries', path: '/admin/projects', icon: <HardHat size={20} /> },
     { name: 'Budget & Invoices', path: '/admin/budget', icon: <DollarSign size={20} /> },
+    { name: 'Transactions Log', path: '/admin/transactions', icon: <CreditCard size={20} /> },
     { name: 'Crew & HR', path: '/admin/crew', icon: <Users size={20} /> },
     { name: 'Inventory', path: '/admin/inventory', icon: <Package size={20} /> },
     { name: 'Scheduling', path: '/admin/scheduling', icon: <Calendar size={20} /> },

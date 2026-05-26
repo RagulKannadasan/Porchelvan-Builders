@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Bell, Shield, Download, Upload, Moon, Sun, Monitor } from 'lucide-react';
 import API_BASE_URL from '../../utils/api';
+import * as XLSX from 'xlsx';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('Profile');
@@ -64,6 +65,74 @@ const Settings = () => {
     }
   };
 
+  const handleExportExcel = async () => {
+    try {
+      const endpoints = ['projects', 'crew', 'inventory', 'schedule', 'issues', 'vault'];
+      const data = {};
+      
+      const fetches = endpoints.map(async (ep) => {
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/${ep}`);
+          if (res.ok) {
+            data[ep] = await res.json();
+          } else {
+            data[ep] = [];
+          }
+        } catch (e) {
+          data[ep] = [];
+        }
+      });
+      
+      await Promise.all(fetches);
+
+      const wb = XLSX.utils.book_new();
+
+      const friendlyHeadersMap = {
+        projects: { title: 'Title', description: 'Description', status: 'Status', location: 'Location', imageUrl: 'Image URL', createdAt: 'Created At', updatedAt: 'Updated At' },
+        crew: { name: 'Name', role: 'Role', phone: 'Phone', currentProject: 'Current Project', createdAt: 'Created At', updatedAt: 'Updated At' },
+        inventory: { name: 'Name', type: 'Type', status: 'Status', quantity: 'Quantity', minQuantity: 'Min Quantity', unit: 'Unit', currentLocation: 'Current Location', createdAt: 'Created At', updatedAt: 'Updated At' },
+        schedule: { title: 'Title', resourceType: 'Resource Type', resourceId: 'Resource ID', projectId: 'Project Site', startDate: 'Start Date', endDate: 'End Date', notes: 'Notes', createdAt: 'Created At', updatedAt: 'Updated At' },
+        issues: { title: 'Title', description: 'Description', projectId: 'Project Site', status: 'Status', priority: 'Priority', createdAt: 'Created At', updatedAt: 'Updated At' },
+        vault: { title: 'Title', projectId: 'Project Site', url: 'Document URL', type: 'Type', createdAt: 'Created At', updatedAt: 'Updated At' }
+      };
+
+      endpoints.forEach((ep) => {
+        const sheetData = data[ep];
+        const mapping = friendlyHeadersMap[ep] || {};
+        
+        const cleanedData = sheetData.map(item => {
+          const cleaned = {};
+          Object.keys(mapping).forEach(key => {
+            let val = item[key];
+            if (val === undefined || val === null) {
+              cleaned[mapping[key]] = '';
+            } else if (typeof val === 'object' && !Array.isArray(val)) {
+              cleaned[mapping[key]] = val.title || val.name || val._id || JSON.stringify(val);
+            } else if (Array.isArray(val)) {
+              cleaned[mapping[key]] = val.map(el => (el && typeof el === 'object') ? (el.name || el.title || JSON.stringify(el)) : el).join(', ');
+            } else {
+              cleaned[mapping[key]] = val;
+            }
+          });
+          return cleaned;
+        });
+
+        const headers = Object.values(mapping);
+        const ws = XLSX.utils.json_to_sheet(cleanedData, { header: headers });
+        const sheetName = ep.charAt(0).toUpperCase() + ep.slice(1);
+        XLSX.utils.book_append_sheet(wb, ws, sheetName);
+      });
+
+      const dateStr = new Date().toISOString().split('T')[0];
+      XLSX.writeFile(wb, `porchelvan_builders_export_${dateStr}.xlsx`);
+      
+      alert("Excel spreadsheet generated and downloaded successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to export Excel spreadsheet. Please check connection.");
+    }
+  };
+
   const handleImportFileChange = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -74,6 +143,7 @@ const Settings = () => {
         const backup = JSON.parse(e.target.result);
         
         let importedCount = 0;
+        let duplicateCount = 0;
         let failedCount = 0;
         
         const endpointsMap = {
@@ -84,11 +154,57 @@ const Settings = () => {
           'issues': '/api/issues',
           'vault': '/api/vault'
         };
+
+        // Fetch existing records from DB to prevent duplicates
+        const existingData = {};
+        const fetches = Object.keys(endpointsMap).map(async (key) => {
+          try {
+            const res = await fetch(`${API_BASE_URL}${endpointsMap[key]}`);
+            if (res.ok) {
+              existingData[key] = await res.json();
+            } else {
+              existingData[key] = [];
+            }
+          } catch (e) {
+            existingData[key] = [];
+          }
+        });
+        await Promise.all(fetches);
+
+        const isDuplicate = (key, item, existingList) => {
+          if (!existingList || existingList.length === 0) return false;
+          
+          switch (key) {
+            case 'projects':
+              return existingList.some(el => el.title?.toLowerCase().trim() === item.title?.toLowerCase().trim());
+            case 'crew':
+              return existingList.some(el => el.name?.toLowerCase().trim() === item.name?.toLowerCase().trim());
+            case 'inventory':
+              return existingList.some(el => el.name?.toLowerCase().trim() === item.name?.toLowerCase().trim() && el.type === item.type);
+            case 'schedule':
+              return existingList.some(el => 
+                el.title?.toLowerCase().trim() === item.title?.toLowerCase().trim() &&
+                el.resourceType === item.resourceType &&
+                new Date(el.startDate).getTime() === new Date(item.startDate).getTime()
+              );
+            case 'issues':
+              return existingList.some(el => el.title?.toLowerCase().trim() === item.title?.toLowerCase().trim());
+            case 'vault':
+              return existingList.some(el => el.title?.toLowerCase().trim() === item.title?.toLowerCase().trim() && el.url === item.url);
+            default:
+              return false;
+          }
+        };
         
         for (const [key, path] of Object.entries(endpointsMap)) {
           const items = backup[key];
           if (Array.isArray(items)) {
             for (const item of items) {
+              if (isDuplicate(key, item, existingData[key])) {
+                duplicateCount++;
+                continue;
+              }
+
               const cleanItem = { ...item };
               delete cleanItem._id;
               delete cleanItem.__v;
@@ -102,6 +218,8 @@ const Settings = () => {
                 });
                 if (res.ok) {
                   importedCount++;
+                  const saved = await res.json();
+                  existingData[key].push(saved); // Update local index to handle duplicates inside the file itself
                 } else {
                   failedCount++;
                 }
@@ -112,7 +230,7 @@ const Settings = () => {
           }
         }
         
-        alert(`Import Complete!\nSuccessfully restored ${importedCount} records.\nFailed/Skipped: ${failedCount} records.`);
+        alert(`Import Complete!\n\n✅ Restored: ${importedCount} records\n⚠️ Skipped duplicates: ${duplicateCount} records\n❌ Failed: ${failedCount} records`);
       } catch (err) {
         alert("Invalid backup file. Please ensure it is a valid JSON backup file generated by this system.");
       }
@@ -278,8 +396,11 @@ const Settings = () => {
                   </div>
                   <div className="data-info">
                     <h3>Export System Data</h3>
-                    <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>Download a complete JSON backup of your projects, budget, and inventory.</p>
-                    <button className="btn btn-outline btn-sm" onClick={handleExportData}>Export Data</button>
+                    <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>Download a complete backup of projects, budget, crew, inventory, scheduling, and issues.</p>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button className="btn btn-outline btn-sm" onClick={handleExportData}>Export JSON</button>
+                      <button className="btn btn-outline btn-sm" onClick={handleExportExcel}>Export Excel</button>
+                    </div>
                   </div>
                 </div>
 

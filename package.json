@@ -16,5 +16,8 @@
   "description": "",
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "postgres": "^3.4.9"
   }
 }
