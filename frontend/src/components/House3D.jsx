@@ -217,9 +217,9 @@ function ResponsiveModel() {
   const isMobile = size.width < 768;
   const isTablet = size.width < 1024 && size.width >= 768;
   
-  let scale = 0.9;
-  if (isMobile) scale = 0.45;
-  else if (isTablet) scale = 0.65;
+  let scale = 1.0;
+  if (isMobile) scale = 0.85;
+  else if (isTablet) scale = 0.95;
 
   return (
     <group scale={scale}>
@@ -229,9 +229,20 @@ function ResponsiveModel() {
 }
 
 export default function App() {
+  const [isDesktop, setIsDesktop] = React.useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <div style={{ width: '100%', height: '100vh', background: 'transparent' }}>
-      <Canvas shadows camera={{ position: [18, 14, 22], fov: 42 }}>
+    <div style={{ width: '100%', height: '100%', background: 'transparent', touchAction: 'pan-y' }}>
+      <Canvas shadows camera={{ position: [18, 14, 22], fov: 42 }} style={{ touchAction: 'pan-y' }}>
         <ambientLight intensity={0.5} />
         <directionalLight
           position={[15, 20, 10]}
@@ -249,11 +260,11 @@ export default function App() {
         <OrbitControls
           target={[0, 2, 0]}
           enableZoom={false}
-          enablePan={true}
-          autoRotate
+          enablePan={false}
+          autoRotate={isDesktop}
           autoRotateSpeed={0.5}
-          maxPolarAngle={Math.PI / 2 - 0.05}
-          minPolarAngle={Math.PI / 8}
+          maxPolarAngle={Math.PI / 2.8}
+          minPolarAngle={Math.PI / 2.8}
         />
       </Canvas>
     </div>
