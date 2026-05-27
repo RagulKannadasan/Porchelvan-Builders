@@ -301,16 +301,33 @@ export default function LandingPage() {
 
     /* ── MOBILE MENU ── */
     .mobile-menu-btn { display: none; background: none; border: none; color: var(--text); cursor: pointer; padding: 0.5rem; }
+    .mobile-menu-overlay-backdrop {
+      position: fixed; inset: 0; background: rgba(9, 13, 26, 0.6); backdrop-filter: blur(4px); z-index: 199;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .mobile-menu-overlay-backdrop.open { opacity: 1; pointer-events: auto; }
     .mobile-menu-overlay {
-      position: fixed; inset: 0; background: var(--bg); z-index: 200;
-      display: flex; flex-direction: column; padding: 2rem;
-      transform: translateX(100%); transition: transform 0.3s;
+      position: fixed; top: 0; bottom: 0; left: 0; width: 280px; height: 100%;
+      background: var(--bg2); border-right: 1px solid var(--border); z-index: 200;
+      display: flex; flex-direction: column; padding: 1.5rem;
+      transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 25px rgba(0,0,0,0.15);
     }
     .mobile-menu-overlay.open { transform: translateX(0); }
-    .mobile-menu-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
-    .mobile-menu-links { display: flex; flex-direction: column; gap: 2rem; list-style: none; }
-    .mobile-menu-links a { font-size: 1.5rem; font-weight: 700; color: var(--text); text-decoration: none; }
-    .mobile-menu-links a:hover { color: var(--accent); }
+    .mobile-menu-top {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem;
+    }
+    .mobile-menu-overlay .mobile-menu-btn { display: flex !important; }
+    .mobile-menu-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .mobile-menu-links li a {
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1rem;
+      color: var(--text); font-weight: 600; font-size: 0.92rem; text-decoration: none;
+      border-radius: 8px; transition: all 0.2s;
+    }
+    .mobile-menu-links li a:hover {
+      background: rgba(249, 115, 22, 0.1); color: var(--accent); transform: translateX(4px);
+    }
 
     @media(max-width:1024px){
       .hero-wrapper { min-height: auto; flex-direction: column; padding-top: 120px; }
@@ -398,19 +415,60 @@ export default function LandingPage() {
       </nav>
 
       {/* ── MOBILE MENU OVERLAY ── */}
+      <div 
+        className={`mobile-menu-overlay-backdrop ${mobileMenuOpen ? 'open' : ''}`} 
+        onClick={() => setMobileMenuOpen(false)} 
+      />
       <div className={`mobile-menu-overlay ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-menu-top">
-          <div className="logo-box">P</div>
+          <a href="#" className="logo" style={{ textDecoration: 'none' }} onClick={() => setMobileMenuOpen(false)}>
+            <div className="logo-box">P</div>
+            <span className="logo-name" style={{ fontStyle: 'normal' }}>Porchelvan</span>
+          </a>
           <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(false)}>
-            <X size={28} />
+            <X size={20} />
           </button>
         </div>
+        
         <ul className="mobile-menu-links">
-          {['Projects','Services','Process','About'].map(n => (
-            <li key={n}><a href="#" onClick={() => setMobileMenuOpen(false)}>{n}</a></li>
+          {[
+            { n: 'Projects', i: <Building size={16} /> },
+            { n: 'Services', i: <HardHat size={16} /> },
+            { n: 'Process',  i: <Clock size={16} /> },
+            { n: 'About',    i: <Shield size={16} /> },
+          ].map(item => (
+            <li key={item.n}>
+              <a href={`#${item.n.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)}>
+                {item.i} {item.n}
+              </a>
+            </li>
           ))}
-          <li><a href="#contact" onClick={() => setMobileMenuOpen(false)}>Contact</a></li>
+          <li>
+            <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
+              <Phone size={16} /> Contact
+            </a>
+          </li>
         </ul>
+
+        <div className="mobile-menu-footer" style={{ marginTop: 'auto', borderTop: '1px solid var(--border)', paddingTop: '1.25rem' }}>
+          <div style={{
+            background: 'var(--bg)',
+            border: '1px solid var(--border)',
+            borderRadius: '12px',
+            padding: '1rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <HardHat size={14} style={{ color: 'var(--accent)' }} />
+              <span style={{ fontSize: '0.82rem', fontWeight: '700', color: 'var(--text)' }}>Porchelvan Support</span>
+            </div>
+            <a href="tel:+919876543210" style={{ fontSize: '0.78rem', color: 'var(--muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Phone size={11} /> +91 98765 43210
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* ── HERO ── */}
