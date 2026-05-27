@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import {
   MapPin, CheckCircle, Home, HardHat, Star,
   ArrowRight, Phone, Mail, Moon, Sun,
@@ -700,6 +701,20 @@ export default function LandingPage() {
           </div>
           <div className="foot-bottom">
             <p>© 2024 Porchelvan Builders. All rights reserved.</p>
+            <Link to="/admin" className="foot-admin-btn" style={{
+              fontSize: '0.78rem',
+              color: 'var(--muted)',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.3rem',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#F97316'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--muted)'}
+            >
+              <HardHat size={12} /> Admin Portal
+            </Link>
             <p>Made with <span className="foot-accent">♥</span> in Thanjavur</p>
           </div>
         </div>
