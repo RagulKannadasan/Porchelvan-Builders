@@ -5,7 +5,6 @@ import {
   ArrowRight, Phone, Mail, Moon, Sun,
   Shield, Zap, Clock, Building, ChevronRight, Play, Menu, X
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import House3D from '../components/House3D';
 import API_BASE_URL from '../utils/api';
 
@@ -487,12 +486,7 @@ export default function LandingPage() {
         <div className="hero-3d-overlay" />
         
         <div className="hero">
-          <motion.div 
-            className="hero-left"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
+          <div className="hero-left">
             <div className="eyebrow"><div className="eyebrow-dot"/>Thanjavur's Premier Builder</div>
             <h1 className="hero-h1">Building Homes<br/>That <span>Last</span><br/>Generations</h1>
             <p className="hero-p">From our roots in Thanjavur, Porchelvan Builders has become the Delta region's most trusted name in residential and commercial construction — blending craftsmanship with modern precision.</p>
@@ -503,7 +497,7 @@ export default function LandingPage() {
                 Watch Story
               </button>
             </div>
-          </motion.div>
+          </div>
 
           {/* Right side is intentionally left empty for the 3D model to be fully visible and interactive */}
           <div className="hero-right" />
@@ -513,13 +507,7 @@ export default function LandingPage() {
 
       {/* ── SERVICES ── */}
       <section className="sec svc-bg">
-        <motion.div 
-          className="sec-w"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="sec-w">
           <div className="sec-row">
             <div>
               <div className="sec-tag">What We Do</div>
@@ -536,18 +524,12 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* ── PROJECTS ── */}
       <section className="sec">
-        <motion.div 
-          className="sec-w"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="sec-w">
           <div className="sec-row">
             <div>
               <div className="sec-tag">Portfolio</div>
@@ -573,18 +555,12 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* ── PROCESS ── */}
       <section className="sec proc-bg">
-        <motion.div 
-          className="sec-w"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="sec-w">
           <div className="proc-grid">
             <div className="proc-img">
               <img src="https://images.unsplash.com/photo-1541888086225-f6404f456108?q=80&w=800" alt="Construction"/>
@@ -612,18 +588,12 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* ── TESTIMONIALS ── */}
       <section className="sec">
-        <motion.div 
-          className="sec-w"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="sec-w">
           <div className="sec-row">
             <div>
               <div className="sec-tag">Testimonials</div>
@@ -648,18 +618,12 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* ── CONTACT ── */}
       <section id="contact" className="sec">
-        <motion.div 
-          className="sec-w"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="sec-w">
           <div className="sec-row">
             <div>
               <div className="sec-tag">Contact Us</div>
@@ -736,7 +700,7 @@ export default function LandingPage() {
               </button>
             </form>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* ── FOOTER ── */}
