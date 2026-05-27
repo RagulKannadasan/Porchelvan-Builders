@@ -335,6 +335,7 @@ export default function LandingPage() {
       .contact-info, .contact-form { padding: 2rem; }
       .form-row { grid-template-columns: 1fr; gap: 1rem; }
       .foot-grid { grid-template-columns:1fr; gap:2.5rem; }
+      .foot-bottom { flex-direction: column; gap: 1.25rem; text-align: center; }
       .sec { padding: 4rem 0; }
     }
     @media(max-width:480px){
