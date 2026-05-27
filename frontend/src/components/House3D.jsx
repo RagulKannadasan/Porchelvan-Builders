@@ -192,13 +192,17 @@ function RoofsAndPillars() {
   );
 }
 
-function LuxuryVilla() {
+function LuxuryVilla({ mobileRotation }) {
   const groupRef = useRef();
 
   useFrame((state) => {
-    const t = state.clock.getElapsedTime();
     if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(t * 0.05) * 0.05;
+      if (mobileRotation !== undefined) {
+        groupRef.current.rotation.y = mobileRotation;
+      } else {
+        const t = state.clock.getElapsedTime();
+        groupRef.current.rotation.y = Math.sin(t * 0.05) * 0.05;
+      }
     }
   });
 
@@ -212,7 +216,7 @@ function LuxuryVilla() {
   );
 }
 
-function ResponsiveModel() {
+function ResponsiveModel({ mobileRotation }) {
   const { size } = useThree();
   const isMobile = size.width < 768;
   const isTablet = size.width < 1024 && size.width >= 768;
@@ -223,13 +227,16 @@ function ResponsiveModel() {
 
   return (
     <group scale={scale}>
-      <LuxuryVilla />
+      <LuxuryVilla mobileRotation={mobileRotation} />
     </group>
   );
 }
 
 export default function App() {
   const [isDesktop, setIsDesktop] = React.useState(typeof window !== 'undefined' ? window.innerWidth >= 1024 : true);
+  const [rotation, setRotation] = React.useState(0);
+  const touchStart = React.useRef(0);
+  const rotationStart = React.useRef(0);
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -240,8 +247,25 @@ export default function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const handleTouchStart = (e) => {
+    if (isDesktop || !e.touches || !e.touches[0]) return;
+    touchStart.current = e.touches[0].clientX;
+    rotationStart.current = rotation;
+  };
+
+  const handleTouchMove = (e) => {
+    if (isDesktop || !e.touches || !e.touches[0]) return;
+    const dx = e.touches[0].clientX - touchStart.current;
+    // 1px drag = 0.012 radians of horizontal rotation
+    setRotation(rotationStart.current + dx * 0.012);
+  };
+
   return (
-    <div style={{ width: '100%', height: '100%', background: 'transparent', touchAction: 'pan-y' }}>
+    <div 
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      style={{ width: '100%', height: '100%', background: 'transparent', touchAction: 'pan-y' }}
+    >
       <Canvas shadows camera={{ position: [18, 14, 22], fov: 42 }} style={{ touchAction: 'pan-y' }}>
         <ambientLight intensity={0.5} />
         <directionalLight
@@ -255,17 +279,19 @@ export default function App() {
 
         <Environment preset="city" />
 
-        <ResponsiveModel />
+        <ResponsiveModel mobileRotation={isDesktop ? undefined : rotation} />
 
-        <OrbitControls
-          target={[0, 2, 0]}
-          enableZoom={false}
-          enablePan={false}
-          autoRotate={isDesktop}
-          autoRotateSpeed={0.5}
-          maxPolarAngle={Math.PI / 2.8}
-          minPolarAngle={Math.PI / 2.8}
-        />
+        {isDesktop && (
+          <OrbitControls
+            target={[0, 2, 0]}
+            enableZoom={false}
+            enablePan={false}
+            autoRotate
+            autoRotateSpeed={0.5}
+            maxPolarAngle={Math.PI / 2.8}
+            minPolarAngle={Math.PI / 2.8}
+          />
+        )}
       </Canvas>
     </div>
   );
