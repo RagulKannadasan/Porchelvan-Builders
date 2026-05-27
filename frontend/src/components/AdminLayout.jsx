@@ -42,8 +42,7 @@ const AdminLayout = () => {
       <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
           <div className="admin-logo-section">
-            <div className="logo-box">P</div>
-            <span className="logo-text" style={{letterSpacing: '-0.3px', marginLeft: '0.6rem'}}>Porchelvan Builders</span>
+            <span className="logo-text" style={{letterSpacing: '-0.3px'}}>Porchelvan Builders</span>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="close-btn-mobile">
             <X size={24} />
@@ -200,13 +199,6 @@ const AdminLayout = () => {
         .admin-logo-section {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-        }
-
-        .logo-box {
-          width: 36px; height: 36px; background: var(--brand-orange);
-          border-radius: 8px; display: flex; align-items: center; justify-content: center;
-          font-weight: 800; font-size: 1rem; color: #fff; flex-shrink: 0;
         }
 
         .logo-text {

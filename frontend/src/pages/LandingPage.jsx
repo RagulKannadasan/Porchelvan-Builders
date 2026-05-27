@@ -87,12 +87,6 @@ export default function LandingPage() {
     }
     .nav-w { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; }
     .logo { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; }
-    .logo-box {
-      width: 36px; height: 36px; background: var(--accent);
-      border-radius: 8px; display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 1.05rem; color: #fff; flex-shrink: 0;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
-    }
     .logo-name {
       font-weight: 800;
       font-size: 1.12rem;
@@ -104,9 +98,8 @@ export default function LandingPage() {
       color: var(--accent);
       font-weight: 600;
     }
-    .logo:hover .logo-box {
-      transform: scale(1.08) rotate(3deg);
-      box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+    .logo:hover .logo-name {
+      color: var(--accent);
     }
     .nav-links { display: flex; gap: 0.5rem; list-style: none; }
     .nav-links a { 
@@ -413,7 +406,6 @@ export default function LandingPage() {
             <Menu size={24} />
           </button>
           <a href="#" className="logo">
-            <div className="logo-box">P</div>
             <span className="logo-name">Porchelvan <span className="logo-accent">Builders</span></span>
           </a>
           <ul className="nav-links">
@@ -437,7 +429,6 @@ export default function LandingPage() {
       <div className={`mobile-menu-overlay ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-menu-top">
           <a href="#" className="logo" style={{ textDecoration: 'none' }} onClick={() => setMobileMenuOpen(false)}>
-            <div className="logo-box">P</div>
             <span className="logo-name" style={{ fontStyle: 'normal' }}>
               Porchelvan <span className="logo-accent">Builders</span>
             </span>
@@ -754,7 +745,6 @@ export default function LandingPage() {
           <div className="foot-grid">
             <div className="foot-brand">
               <a href="#" className="logo">
-                <div className="logo-box">P</div>
                 <span className="logo-name">Porchelvan <span className="logo-accent">Builders</span></span>
               </a>
               <p>Building the finest homes since 1996, headquartered in Thanjavur with projects across the Delta region.</p>
