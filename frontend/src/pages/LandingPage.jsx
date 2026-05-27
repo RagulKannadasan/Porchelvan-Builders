@@ -394,6 +394,9 @@ export default function LandingPage() {
       {/* ── NAV ── */}
       <nav className={`nav${scrolled ? ' scrolled' : ''}`}>
         <div className="nav-w">
+          <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)} style={{ paddingLeft: 0 }}>
+            <Menu size={24} />
+          </button>
           <a href="#" className="logo">
             <div className="logo-box">P</div>
             <span className="logo-name">Porchelvan Builders</span>
@@ -407,9 +410,6 @@ export default function LandingPage() {
               {dark ? <Sun size={16}/> : <Moon size={16}/>}
             </button>
             <button className="btn-nav" onClick={() => document.getElementById('contact')?.scrollIntoView({behavior:'smooth'})}>Get Quote</button>
-            <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)}>
-              <Menu size={24} />
-            </button>
           </div>
         </div>
       </nav>
