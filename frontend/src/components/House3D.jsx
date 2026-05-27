@@ -8,8 +8,8 @@ const DarkConcrete = () => <meshStandardMaterial color="#4a4d52" roughness={0.9}
 const WoodDeck = () => <meshStandardMaterial color="#8b5a2b" roughness={0.7} />;
 const WoodSlats = () => <meshStandardMaterial color="#6b4423" roughness={0.8} />;
 const BlackTrim = () => <meshStandardMaterial color="#1a1a1a" roughness={0.5} metalness={0.8} />;
-const Glass = () => <meshPhysicalMaterial color="#c2d1e0" transmission={0.9} opacity={1} roughness={0.05} thickness={0.5} />;
-const PoolWater = () => <meshPhysicalMaterial color="#40b4cc" transmission={0.8} opacity={0.9} roughness={0.1} />;
+const Glass = () => <meshStandardMaterial color="#c2d1e0" transparent={true} opacity={0.4} roughness={0.1} metalness={0.8} />;
+const PoolWater = () => <meshStandardMaterial color="#40b4cc" transparent={true} opacity={0.7} roughness={0.2} metalness={0.5} />;
 const Concrete = () => <meshStandardMaterial color="#a0a4a8" roughness={0.9} />;
 const Grass = () => <meshStandardMaterial color="#4a7040" roughness={1} />;
 const Foliage = () => <meshStandardMaterial color="#2d4a22" roughness={0.9} />;
@@ -133,7 +133,7 @@ function UpperFloor() {
       {/* Decorative Wooden Louvers (Slats) across the master suite front */}
       <group position={[-2, 0, 2.1]}>
         {Array.from({ length: 15 }).map((_, i) => (
-          <mesh position={[i * 0.4 - 2.8, 0, 0]} key={i} castShadow>
+          <mesh position={[i * 0.4 - 2.8, 0, 0]} key={i}>
             <boxGeometry args={[0.1, 3, 0.2]} />
             <WoodSlats />
           </mesh>
@@ -266,13 +266,13 @@ export default function App() {
       onTouchMove={handleTouchMove}
       style={{ width: '100%', height: '100%', background: 'transparent', touchAction: 'pan-y' }}
     >
-      <Canvas shadows camera={{ position: [18, 14, 22], fov: 42 }} style={{ touchAction: 'pan-y' }}>
+      <Canvas dpr={[1, 1.5]} shadows camera={{ position: [18, 14, 22], fov: 42 }} style={{ touchAction: 'pan-y' }}>
         <ambientLight intensity={0.5} />
         <directionalLight
           position={[15, 20, 10]}
           intensity={1.3}
           castShadow
-          shadow-mapSize={4096}
+          shadow-mapSize={isDesktop ? 2048 : 512}
           shadow-bias={-0.0001}
         />
         <directionalLight position={[-15, 10, -10]} intensity={0.3} />
