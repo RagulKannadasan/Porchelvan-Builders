@@ -572,6 +572,30 @@ const Dashboard = () => {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
+
+        @media (max-width: 768px) {
+          .dashboard-header h1 {
+            font-size: 1.75rem;
+          }
+          .stats-matrix {
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding-bottom: 1.5rem;
+          }
+          .stat-item-value {
+             font-size: 1.8rem;
+          }
+          .minimal-dashboard {
+            gap: 1.5rem;
+          }
+          .minimal-card {
+            padding: 1.25rem;
+            gap: 1rem;
+          }
+          .dashboard-grid {
+            gap: 1.5rem;
+          }
+        }
       `}</style>
     </div>
   );

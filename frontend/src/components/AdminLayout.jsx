@@ -131,10 +131,6 @@ const AdminLayout = () => {
           padding: 0.75rem 1.5rem;
           background-color: var(--admin-surface);
           border-bottom: 1px solid var(--admin-border);
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
           z-index: 40;
           box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
@@ -397,8 +393,13 @@ const AdminLayout = () => {
 
         /* Responsive Design */
         @media (max-width: 768px) {
+          .admin-container {
+            flex-direction: column;
+          }
+          
           .admin-mobile-header {
             display: flex;
+            flex-shrink: 0;
           }
 
           .admin-sidebar {
@@ -430,7 +431,7 @@ const AdminLayout = () => {
           }
 
           .admin-main {
-            margin-top: 56px; /* Offset for mobile header */
+            margin-top: 0;
           }
           
           .admin-content-wrapper {

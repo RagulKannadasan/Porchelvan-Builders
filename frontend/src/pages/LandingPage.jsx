@@ -5,14 +5,22 @@ import {
   ArrowRight, Phone, Mail, Moon, Sun,
   Shield, Zap, Clock, Building, ChevronRight, Play, Menu, X
 } from 'lucide-react';
-import House3D from '../components/House3D';
+import ConstructionAnimation from '../components/ConstructionAnimation';
 import API_BASE_URL from '../utils/api';
+import img1 from '../assets/images/img1.jpeg';
+import img2 from '../assets/images/img2.jpeg';
+import img3 from '../assets/images/img3.jpeg';
+import img4 from '../assets/images/img4.jpeg';
+import img5 from '../assets/images/img5.jpeg';
+import img6 from '../assets/images/img6.jpeg';
+import img7 from '../assets/images/img7.jpeg';
 
 export default function LandingPage() {
   const [dark, setDark] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
+
   const [formData, setFormData] = useState({
     firstName: '', lastName: '', email: '', phone: '', projectType: 'residential', message: ''
   });
@@ -43,10 +51,16 @@ export default function LandingPage() {
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', fn);
-    return () => window.removeEventListener('scroll', fn);
+
+    const handleResize = () => setIsMobile(window.innerWidth <= 1024);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('scroll', fn);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
-
-
 
   const d = dark;
 
@@ -74,7 +88,7 @@ export default function LandingPage() {
     /* ── NAV ── */
     .nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 1.4rem 0;
+      padding: 1rem 0;
       transition: all 0.3s;
     }
     .nav.scrolled {
@@ -82,7 +96,7 @@ export default function LandingPage() {
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
-      padding: 1rem 0;
+      padding: 0.6rem 0;
     }
     .nav-w { max-width: 1280px; margin: 0 auto; padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; }
     .logo { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; }
@@ -137,10 +151,8 @@ export default function LandingPage() {
 
     /* ── HERO ── */
     .hero-wrapper { position: relative; width: 100%; min-height: 100vh; display: flex; align-items: center; overflow: hidden; padding-top: 80px; }
-    .hero-3d-bg { position: absolute; top: 0; bottom: 0; left: 0; width: 140%; z-index: 0; pointer-events: auto; }
     .hero { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; pointer-events: none; }
-    .hero-left { pointer-events: auto; }
-    .hero-left { }
+    .hero-left, .hero-right { pointer-events: auto; }
     .eyebrow {
       display: inline-flex; align-items: center; gap: 0.4rem;
       border: 1px solid var(--border); border-radius: 50px;
@@ -206,7 +218,6 @@ export default function LandingPage() {
     .badge-info strong { display:block; font-size:0.82rem; font-weight:700; color:var(--text); }
     .badge-info span { font-size:0.72rem; color:var(--muted); }
     .badge-stars { color: var(--accent); font-size:0.7rem; letter-spacing:1px; }
-
 
     /* ── SECTION SHARED ── */
     .sec { padding: 6rem 0; }
@@ -339,8 +350,9 @@ export default function LandingPage() {
     @media(max-width:1024px){
       .hero-wrapper { min-height: auto; flex-direction: column; padding-top: 120px; }
       .hero { padding-top: 0; padding-bottom: 3rem; grid-template-columns:1fr; gap:3rem; }
-      .hero-3d-bg { position: relative; width: 100%; height: 50vh; top: auto; bottom: auto; left: auto; }
-      .hero-right { display:none; }
+      .hero-left { display: flex; flex-direction: column; align-items: center; text-align: center; }
+      .hero-p { margin-left: auto; margin-right: auto; }
+      .hero-actions { justify-content: center; }
       .prj-grid { grid-template-columns: repeat(2,1fr); }
       .proc-grid { grid-template-columns:1fr; }
       .proc-img { display:none; }
@@ -349,7 +361,6 @@ export default function LandingPage() {
       .testi-grid { grid-template-columns:1fr; }
     }
     @media(max-width:768px){
-      .hero-3d-bg { height: 45vh; }
       .nav-links { display:none; }
       .btn-nav { display:none; }
       .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
@@ -363,7 +374,6 @@ export default function LandingPage() {
       .sec { padding: 4rem 0; }
     }
     @media(max-width:480px){
-      .hero-3d-bg { height: 40vh; }
       .hero { padding: 0 1.5rem 3rem; }
       .hero-h1 { font-size: 2.4rem; }
       .sec-w { padding: 0 1.5rem; }
@@ -374,24 +384,24 @@ export default function LandingPage() {
   `;
 
   const projects = [
-    { id:1, title:'Ocean Breeze Villa', price:'₹2.1 Cr', location:'Thanjavur', img:'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=800', beds:4, baths:3, tag:'Luxury', sqft:'4,200' },
-    { id:2, title:'Jubilee Residences',  price:'₹1.4 Cr', location:'Thiruvarur',    img:'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=800', beds:3, baths:2, tag:'Premium', sqft:'3,100' },
-    { id:3, title:'Lakeside Cottage',    price:'₹85 L',   location:'Kumbakonam',     img:'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800', beds:2, baths:2, tag:'Serene',  sqft:'1,800' },
+    { id: 1, title: 'Ocean Breeze Villa', price: '₹2.1 Cr', location: 'Thanjavur', img: img1, beds: 4, baths: 3, tag: 'Luxury', sqft: '4,200' },
+    { id: 2, title: 'Jubilee Residences', price: '₹1.4 Cr', location: 'Thiruvarur', img: img2, beds: 3, baths: 2, tag: 'Premium', sqft: '3,100' },
+    { id: 3, title: 'Lakeside Cottage', price: '₹85 L', location: 'Kumbakonam', img: img3, beds: 2, baths: 2, tag: 'Serene', sqft: '1,800' },
   ];
 
   const services = [
-    { icon:<Home size={20}/>,      title:'Custom Homes',          desc:'Bespoke residences built around your vision, lifestyle, and budget.' },
-    { icon:<Building size={20}/>,  title:'Commercial Spaces',     desc:'Offices, retail, and hospitality projects built for lasting impact.' },
-    { icon:<HardHat size={20}/>,   title:'Renovation',            desc:'Expert renovation that breathes new life into existing structures.' },
-    { icon:<Shield size={20}/>,    title:'10-Year Warranty',      desc:'Every build backed by our comprehensive structural guarantee.' },
-    { icon:<Zap size={20}/>,       title:'Smart Home Tech',       desc:'Seamlessly integrated automation from day one of construction.' },
-    { icon:<Clock size={20}/>,     title:'On-Time Delivery',      desc:'96% on-time track record. We don\'t make promises we can\'t keep.' },
+    { icon: <Home size={20} />, title: 'Custom Homes', desc: 'Bespoke residences built around your vision, lifestyle, and budget.' },
+    { icon: <Building size={20} />, title: 'Commercial Spaces', desc: 'Offices, retail, and hospitality projects built for lasting impact.' },
+    { icon: <HardHat size={20} />, title: 'Renovation', desc: 'Expert renovation that breathes new life into existing structures.' },
+    { icon: <Shield size={20} />, title: '10-Year Warranty', desc: 'Every build backed by our comprehensive structural guarantee.' },
+    { icon: <Zap size={20} />, title: 'Smart Home Tech', desc: 'Seamlessly integrated automation from day one of construction.' },
+    { icon: <Clock size={20} />, title: 'On-Time Delivery', desc: '96% on-time track record. We don\'t make promises we can\'t keep.' },
   ];
 
   const testimonials = [
-    { name:'Ramesh Krishnan',    role:'Home Owner, Thanjavur',      text:'Porchelvan Builders exceeded every expectation. Our villa was delivered ahead of schedule and the craftsmanship is outstanding.', rating:5, img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100' },
-    { name:'Priya Subramaniam', role:'Property Investor',         text:'I\'ve worked with many builders across Tamil Nadu. Nobody matches their attention to detail and post-handover support.',          rating:5, img:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=100' },
-    { name:'Arun Mehta',        role:'Business Owner, Thiruvarur',   text:'From blueprint to key delivery — transparent, on-budget, and stress-free. Truly world-class builders.',                          rating:5, img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=100' },
+    { name: 'Ramesh Krishnan', role: 'Home Owner, Thanjavur', text: 'Porchelvan Builders exceeded every expectation. Our villa was delivered ahead of schedule and the craftsmanship is outstanding.', rating: 5, img: img4 },
+    { name: 'Priya Subramaniam', role: 'Property Investor', text: 'I\'ve worked with many builders across Tamil Nadu. Nobody matches their attention to detail and post-handover support.', rating: 5, img: img5 },
+    { name: 'Arun Mehta', role: 'Business Owner, Thiruvarur', text: 'From blueprint to key delivery — transparent, on-budget, and stress-free. Truly world-class builders.', rating: 5, img: img6 },
   ];
 
   return (
@@ -408,22 +418,22 @@ export default function LandingPage() {
             <span className="logo-name">Porchelvan <span className="logo-accent">Builders</span></span>
           </a>
           <ul className="nav-links">
-            {['Projects','Services','Process','About'].map(n => <li key={n}><a href="#">{n}</a></li>)}
+            {['Projects', 'Services', 'Process', 'About'].map(n => <li key={n}><a href="#">{n}</a></li>)}
             <li><a href="#contact">Contact</a></li>
           </ul>
           <div className="nav-right">
             <button className="theme-btn" onClick={() => setDark(!dark)} title="Toggle theme">
-              {dark ? <Sun size={16}/> : <Moon size={16}/>}
+              {dark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
-            <button className="btn-nav" onClick={() => document.getElementById('contact')?.scrollIntoView({behavior:'smooth'})}>Get Quote</button>
+            <button className="btn-nav" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>Get Quote</button>
           </div>
         </div>
       </nav>
 
       {/* ── MOBILE MENU OVERLAY ── */}
-      <div 
-        className={`mobile-menu-overlay-backdrop ${mobileMenuOpen ? 'open' : ''}`} 
-        onClick={() => setMobileMenuOpen(false)} 
+      <div
+        className={`mobile-menu-overlay-backdrop ${mobileMenuOpen ? 'open' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
       />
       <div className={`mobile-menu-overlay ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="mobile-menu-top">
@@ -436,13 +446,13 @@ export default function LandingPage() {
             <X size={20} />
           </button>
         </div>
-        
+
         <ul className="mobile-menu-links">
           {[
             { n: 'Projects', i: <Building size={16} /> },
             { n: 'Services', i: <HardHat size={16} /> },
-            { n: 'Process',  i: <Clock size={16} /> },
-            { n: 'About',    i: <Shield size={16} /> },
+            { n: 'Process', i: <Clock size={16} /> },
+            { n: 'About', i: <Shield size={16} /> },
           ].map(item => (
             <li key={item.n}>
               <a href={`#${item.n.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)}>
@@ -480,27 +490,23 @@ export default function LandingPage() {
 
       {/* ── HERO ── */}
       <div className="hero-wrapper">
-        <div className="hero-3d-bg">
-          <House3D />
-        </div>
-        <div className="hero-3d-overlay" />
-        
         <div className="hero">
           <div className="hero-left">
-            <div className="eyebrow"><div className="eyebrow-dot"/>Thanjavur's Premier Builder</div>
-            <h1 className="hero-h1">Building Homes<br/>That <span>Last</span><br/>Generations</h1>
+            <div className="eyebrow"><div className="eyebrow-dot" />Thanjavur's Premier Builder</div>
+            <h1 className="hero-h1">Let's build your<br />dream home <span>together.</span></h1>
             <p className="hero-p">From our roots in Thanjavur, Porchelvan Builders has become the Delta region's most trusted name in residential and commercial construction — blending craftsmanship with modern precision.</p>
             <div className="hero-actions">
-              <button className="btn-primary">Explore Projects <ArrowRight size={15}/></button>
+              <button className="btn-primary">Explore Projects <ArrowRight size={15} /></button>
               <button className="btn-outline">
-                <div className="play-circle"><Play size={10} fill="currentColor"/></div>
+                <div className="play-circle"><Play size={10} fill="currentColor" /></div>
                 Watch Story
               </button>
             </div>
           </div>
 
-          {/* Right side is intentionally left empty for the 3D model to be fully visible and interactive */}
-          <div className="hero-right" />
+          <div className="hero-right">
+            <ConstructionAnimation />
+          </div>
         </div>
       </div>
 
@@ -511,12 +517,12 @@ export default function LandingPage() {
           <div className="sec-row">
             <div>
               <div className="sec-tag">What We Do</div>
-              <h2 className="sec-h2">Every Service You<br/><span>Need to Build</span></h2>
+              <h2 className="sec-h2">Every Service You<br /><span>Need to Build</span></h2>
             </div>
-            <button className="link-more">All Services <ChevronRight size={15}/></button>
+            <button className="link-more">All Services <ChevronRight size={15} /></button>
           </div>
           <div className="svc-grid">
-            {services.map((s,i) => (
+            {services.map((s, i) => (
               <div key={i} className="svc-card">
                 <div className="svc-icon">{s.icon}</div>
                 <h3>{s.title}</h3>
@@ -536,19 +542,19 @@ export default function LandingPage() {
               <h2 className="sec-h2">Our <span>Finest</span> Work</h2>
               <p className="sec-p">Discover our most acclaimed builds — each one a testament to precision, premium materials, and modern design.</p>
             </div>
-            <button className="link-more">View All <ChevronRight size={15}/></button>
+            <button className="link-more">View All <ChevronRight size={15} /></button>
           </div>
           <div className="prj-grid">
             {projects.map(p => (
               <div key={p.id} className="prj-card">
-                <img src={p.img} alt={p.title}/>
+                <img src={p.img} alt={p.title} />
                 <div className="prj-body">
                   <div className="prj-tag">{p.tag}</div>
                   <h3>{p.title}</h3>
                   <div className="prj-price">{p.price}</div>
                   <div className="prj-meta">
-                    <span><HardHat size={11}/> {p.beds} Beds · {p.baths} Baths</span>
-                    <span><MapPin size={11}/> {p.location}</span>
+                    <span><HardHat size={11} /> {p.beds} Beds · {p.baths} Baths</span>
+                    <span><MapPin size={11} /> {p.location}</span>
                     <span>{p.sqft} sq.ft</span>
                   </div>
                 </div>
@@ -563,22 +569,22 @@ export default function LandingPage() {
         <div className="sec-w">
           <div className="proc-grid">
             <div className="proc-img">
-              <img src="https://images.unsplash.com/photo-1541888086225-f6404f456108?q=80&w=800" alt="Construction"/>
+              <img src={img7} alt="Construction" />
             </div>
             <div>
               <div className="sec-tag">Our Process</div>
-              <h2 className="sec-h2" style={{marginBottom:'0.5rem'}}>Built Right,<br/><span>Every Time</span></h2>
-              <p className="sec-p" style={{marginBottom:'2.5rem'}}>Our 5-step process keeps you confident and informed from the first meeting to key handover.</p>
+              <h2 className="sec-h2" style={{ marginBottom: '0.5rem' }}>Built Right,<br /><span>Every Time</span></h2>
+              <p className="sec-p" style={{ marginBottom: '2.5rem' }}>Our 5-step process keeps you confident and informed from the first meeting to key handover.</p>
               <div>
                 {[
-                  { t:'Initial Consultation', d:'We understand your vision, budget, and timeline to plan the right approach.' },
-                  { t:'Blueprint & Approvals',  d:'Detailed architectural plans and full handling of all municipal permits.' },
-                  { t:'Material Sourcing',      d:'Premium-grade materials from certified vendors — zero quality compromise.' },
-                  { t:'Expert Construction',    d:'Skilled crews with daily updates via our real-time client portal app.' },
-                  { t:'Handover & Warranty',    d:'Full inspection, snag clearance, and 10-year structural warranty.' },
-                ].map((s,i) => (
+                  { t: 'Initial Consultation', d: 'We understand your vision, budget, and timeline to plan the right approach.' },
+                  { t: 'Blueprint & Approvals', d: 'Detailed architectural plans and full handling of all municipal permits.' },
+                  { t: 'Material Sourcing', d: 'Premium-grade materials from certified vendors — zero quality compromise.' },
+                  { t: 'Expert Construction', d: 'Skilled crews with daily updates via our real-time client portal app.' },
+                  { t: 'Handover & Warranty', d: 'Full inspection, snag clearance, and 10-year structural warranty.' },
+                ].map((s, i) => (
                   <div key={i} className="step">
-                    <div className="step-n">0{i+1}</div>
+                    <div className="step-n">0{i + 1}</div>
                     <div>
                       <h4>{s.t}</h4>
                       <p>{s.d}</p>
@@ -597,19 +603,19 @@ export default function LandingPage() {
           <div className="sec-row">
             <div>
               <div className="sec-tag">Testimonials</div>
-              <h2 className="sec-h2">Words From<br/><span>Happy Owners</span></h2>
+              <h2 className="sec-h2">Words From<br /><span>Happy Owners</span></h2>
             </div>
-            <div style={{display:'flex',alignItems:'center',gap:'0.4rem',color:'var(--accent)',fontWeight:700,fontSize:'0.9rem'}}>
-              <Star size={16} fill="var(--accent)"/> 4.9 / 5 Average
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--accent)', fontWeight: 700, fontSize: '0.9rem' }}>
+              <Star size={16} fill="var(--accent)" /> 4.9 / 5 Average
             </div>
           </div>
           <div className="testi-grid">
-            {testimonials.map((t,i) => (
+            {testimonials.map((t, i) => (
               <div key={i} className="testi-card">
                 <div className="testi-stars">{'★'.repeat(t.rating)}</div>
                 <p className="testi-q">"{t.text}"</p>
                 <div className="testi-au">
-                  <div className="testi-av"><img src={t.img} alt={t.name}/></div>
+                  <div className="testi-av"><img src={t.img} alt={t.name} /></div>
                   <div>
                     <div className="testi-name">{t.name}</div>
                     <div className="testi-role">{t.role}</div>
@@ -631,28 +637,28 @@ export default function LandingPage() {
               <p className="sec-p">Schedule a free consultation or send us a message. Our team will get back to you within 24 hours.</p>
             </div>
           </div>
-          
+
           <div className="contact-grid">
             <div className="contact-info">
               <div className="contact-info-item">
-                <div className="contact-icon"><Phone size={20}/></div>
+                <div className="contact-icon"><Phone size={20} /></div>
                 <div className="contact-text">
                   <h4>Call Us Directly</h4>
-                  <p>+91 98765 43210<br/>Mon-Sat: 9AM - 6PM</p>
+                  <p>+91 98765 43210<br />Mon-Sat: 9AM - 6PM</p>
                 </div>
               </div>
               <div className="contact-info-item">
-                <div className="contact-icon"><Mail size={20}/></div>
+                <div className="contact-icon"><Mail size={20} /></div>
                 <div className="contact-text">
                   <h4>Email Enquiries</h4>
-                  <p>hello@porchelvan.com<br/>projects@porchelvan.com</p>
+                  <p>hello@porchelvan.com<br />projects@porchelvan.com</p>
                 </div>
               </div>
               <div className="contact-info-item">
-                <div className="contact-icon"><MapPin size={20}/></div>
+                <div className="contact-icon"><MapPin size={20} /></div>
                 <div className="contact-text">
                   <h4>Head Office</h4>
-                  <p>42, Medical College Road,<br/>Thanjavur, Tamil Nadu 613004</p>
+                  <p>42, Medical College Road,<br />Thanjavur, Tamil Nadu 613004</p>
                 </div>
               </div>
             </div>
@@ -661,26 +667,26 @@ export default function LandingPage() {
               <div className="form-row">
                 <div className="form-group">
                   <label>First Name</label>
-                  <input type="text" placeholder="John" required value={formData.firstName} onChange={e => setFormData({...formData, firstName: e.target.value})} />
+                  <input type="text" placeholder="John" required value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })} />
                 </div>
                 <div className="form-group">
                   <label>Last Name</label>
-                  <input type="text" placeholder="Doe" required value={formData.lastName} onChange={e => setFormData({...formData, lastName: e.target.value})} />
+                  <input type="text" placeholder="Doe" required value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })} />
                 </div>
               </div>
               <div className="form-row">
                 <div className="form-group">
                   <label>Email Address</label>
-                  <input type="email" placeholder="john@example.com" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+                  <input type="email" placeholder="john@example.com" required value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
                 </div>
                 <div className="form-group">
                   <label>Phone Number</label>
-                  <input type="tel" placeholder="+91" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+                  <input type="tel" placeholder="+91" required value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} />
                 </div>
               </div>
               <div className="form-group">
                 <label>Project Type</label>
-                <select value={formData.projectType} onChange={e => setFormData({...formData, projectType: e.target.value})} style={{width:'100%', padding:'1rem 1.25rem', borderRadius:'12px', border:'1px solid var(--border)', background:'var(--bg)', color:'var(--text)', fontFamily:'inherit', fontSize:'0.95rem', outline:'none'}}>
+                <select value={formData.projectType} onChange={e => setFormData({ ...formData, projectType: e.target.value })} style={{ width: '100%', padding: '1rem 1.25rem', borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text)', fontFamily: 'inherit', fontSize: '0.95rem', outline: 'none' }}>
                   <option value="residential">Residential / Custom Home</option>
                   <option value="commercial">Commercial Space</option>
                   <option value="renovation">Renovation</option>
@@ -689,14 +695,14 @@ export default function LandingPage() {
               </div>
               <div className="form-group">
                 <label>Message</label>
-                <textarea rows={4} placeholder="Tell us about your project requirements, budget, or any questions you have..." required value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})}></textarea>
+                <textarea rows={4} placeholder="Tell us about your project requirements, budget, or any questions you have..." required value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })}></textarea>
               </div>
-              
-              {submitStatus === 'success' && <div style={{color: '#10B981', fontSize: '0.9rem', fontWeight: '600', padding: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px'}}>Thank you! Your inquiry has been submitted.</div>}
-              {submitStatus === 'error' && <div style={{color: '#EF4444', fontSize: '0.9rem', fontWeight: '600', padding: '0.5rem', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px'}}>Failed to send. Please try again.</div>}
+
+              {submitStatus === 'success' && <div style={{ color: '#10B981', fontSize: '0.9rem', fontWeight: '600', padding: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px' }}>Thank you! Your inquiry has been submitted.</div>}
+              {submitStatus === 'error' && <div style={{ color: '#EF4444', fontSize: '0.9rem', fontWeight: '600', padding: '0.5rem', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px' }}>Failed to send. Please try again.</div>}
 
               <button type="submit" className="btn-submit" disabled={submitting} style={{ opacity: submitting ? 0.7 : 1 }}>
-                {submitting ? 'Sending...' : 'Post Message'} {!submitting && <ArrowRight size={16}/>}
+                {submitting ? 'Sending...' : 'Post Message'} {!submitting && <ArrowRight size={16} />}
               </button>
             </form>
           </div>
@@ -713,15 +719,15 @@ export default function LandingPage() {
               </a>
               <p>Building the finest homes since 1996, headquartered in Thanjavur with projects across the Delta region.</p>
               <div className="foot-contact">
-                <a href="tel:+919876543210"><Phone size={13}/> +91 98765 43210</a>
-                <a href="mailto:hello@porchelvan.com"><Mail size={13}/> hello@porchelvan.com</a>
-                <a href="#"><MapPin size={13}/> 42, Medical College Rd, Thanjavur</a>
+                <a href="tel:+919876543210"><Phone size={13} /> +91 98765 43210</a>
+                <a href="mailto:hello@porchelvan.com"><Mail size={13} /> hello@porchelvan.com</a>
+                <a href="#"><MapPin size={13} /> 42, Medical College Rd, Thanjavur</a>
               </div>
             </div>
             {[
-              { h:'Services', l:['Custom Homes','Commercial','Renovations','Smart Homes','Interiors'] },
-              { h:'Company',  l:['About Us','Our Team','Careers','Awards','Blog'] },
-              { h:'Support',  l:['Client Portal','Warranty','FAQs','Terms','Privacy'] },
+              { h: 'Services', l: ['Custom Homes', 'Commercial', 'Renovations', 'Smart Homes', 'Interiors'] },
+              { h: 'Company', l: ['About Us', 'Our Team', 'Careers', 'Awards', 'Blog'] },
+              { h: 'Support', l: ['Client Portal', 'Warranty', 'FAQs', 'Terms', 'Privacy'] },
             ].map(col => (
               <div key={col.h} className="foot-col">
                 <h4>{col.h}</h4>
@@ -740,12 +746,11 @@ export default function LandingPage() {
               gap: '0.3rem',
               transition: 'color 0.2s',
             }}
-            onMouseEnter={(e) => e.currentTarget.style.color = '#F97316'}
-            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--muted)'}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#F97316'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--muted)'}
             >
               <HardHat size={12} /> Admin Portal
             </Link>
-            <p>Made with <span className="foot-accent">♥</span> in Thanjavur</p>
           </div>
         </div>
       </footer>
