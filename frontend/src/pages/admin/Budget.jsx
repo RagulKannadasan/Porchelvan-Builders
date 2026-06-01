@@ -130,7 +130,8 @@ const Budget = () => {
               >
                 <strong>{p.title}</strong>
               </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
