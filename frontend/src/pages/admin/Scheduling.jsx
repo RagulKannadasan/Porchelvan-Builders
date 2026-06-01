@@ -9,6 +9,7 @@ const Scheduling = () => {
   const [equipment, setEquipment] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [newEvent, setNewEvent] = useState({
     title: '',
@@ -67,6 +68,7 @@ const Scheduling = () => {
 
   const handleCreateEvent = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/schedule`, {
         method: 'POST',
@@ -78,7 +80,9 @@ const Scheduling = () => {
         setNewEvent({ title: '', resourceType: 'Crew', resourceId: '', projectId: '', startDate: '', endDate: '', notes: '' });
         fetchEvents();
       }
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDeleteEvent = async (id) => {
@@ -221,7 +225,9 @@ const Scheduling = () => {
                 <input type="text" value={newEvent.notes} onChange={e => setNewEvent({...newEvent, notes: e.target.value})} />
               </div>
 
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }}>Add to Schedule</button>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }} disabled={isSubmitting}>
+                {isSubmitting ? <><span className="btn-spinner"></span> Scheduling...</> : 'Add to Schedule'}
+              </button>
             </form>
           </div>
         </div>

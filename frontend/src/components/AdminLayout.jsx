@@ -460,6 +460,18 @@ const AdminLayout = () => {
           animation: spin 1s linear infinite;
         }
 
+        .btn-spinner {
+          display: inline-block;
+          width: 16px;
+          height: 16px;
+          border: 2px solid rgba(255, 255, 255, 0.4);
+          border-top-color: white;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          vertical-align: middle;
+          margin-right: 0.5rem;
+        }
+
         @keyframes spin {
           to { transform: rotate(360deg); }
         }

@@ -9,6 +9,7 @@ const IssuesVault = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Forms
   const [newIssue, setNewIssue] = useState({ title: '', description: '', projectId: '', priority: 'Medium' });
@@ -46,6 +47,7 @@ const IssuesVault = () => {
 
   const handleCreateIssue = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/issues`, {
         method: 'POST',
@@ -57,11 +59,14 @@ const IssuesVault = () => {
         setNewIssue({ title: '', description: '', projectId: '', priority: 'Medium' });
         fetchIssues();
       }
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCreateDoc = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/vault`, {
         method: 'POST',
@@ -73,7 +78,9 @@ const IssuesVault = () => {
         setNewDoc({ title: '', projectId: '', url: '', type: 'Blueprint' });
         fetchVaultDocs();
       }
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleUpdateIssueStatus = async (id, status) => {
@@ -264,7 +271,9 @@ const IssuesVault = () => {
                     </select>
                   </div>
                 </div>
-                <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>Log Issue</button>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }} disabled={isSubmitting}>
+                  {isSubmitting ? <><span className="btn-spinner"></span> Logging...</> : 'Log Issue'}
+                </button>
               </form>
             ) : (
               <form onSubmit={handleCreateDoc}>
@@ -294,7 +303,9 @@ const IssuesVault = () => {
                   <label>File URL (Cloud storage link)</label>
                   <input required type="url" placeholder="https://..." value={newDoc.url} onChange={e => setNewDoc({...newDoc, url: e.target.value})} />
                 </div>
-                <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>Save to Vault</button>
+                <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }} disabled={isSubmitting}>
+                  {isSubmitting ? <><span className="btn-spinner"></span> Saving...</> : 'Save to Vault'}
+                </button>
               </form>
             )}
           </div>

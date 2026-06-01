@@ -8,6 +8,8 @@ const Budget = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [budgetData, setBudgetData] = useState({ expenses: [], invoices: [] });
   const [isBudgetLoading, setIsBudgetLoading] = useState(false);
+  const [isSubmittingExpense, setIsSubmittingExpense] = useState(false);
+  const [isSubmittingInvoice, setIsSubmittingInvoice] = useState(false);
   
   // Modals
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
@@ -50,6 +52,7 @@ const Budget = () => {
 
   const handleCreateExpense = async (e) => {
     e.preventDefault();
+    setIsSubmittingExpense(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/projects/${selectedProject._id}/expenses`, {
         method: 'POST',
@@ -61,11 +64,14 @@ const Budget = () => {
         setNewExpense({ category: 'Materials', amount: '', description: '', receiptUrl: '' });
         fetchBudgetData(selectedProject._id);
       }
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsSubmittingExpense(false);
+    }
   };
 
   const handleCreateInvoice = async (e) => {
     e.preventDefault();
+    setIsSubmittingInvoice(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/projects/${selectedProject._id}/invoices`, {
         method: 'POST',
@@ -77,7 +83,9 @@ const Budget = () => {
         setNewInvoice({ amount: '', description: '', status: 'Unpaid' });
         fetchBudgetData(selectedProject._id);
       }
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsSubmittingInvoice(false);
+    }
   };
 
   const handleToggleInvoiceStatus = async (invoice) => {
@@ -295,7 +303,9 @@ const Budget = () => {
                 <Upload size={24} style={{ color: 'var(--admin-text-muted)', marginBottom: '0.5rem' }} />
                 <p className="text-muted" style={{ margin: 0, fontSize: '0.9rem' }}>Upload Receipt (Feature coming soon)</p>
               </div>
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }}>Log Expense</button>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }} disabled={isSubmittingExpense}>
+                {isSubmittingExpense ? <><span className="btn-spinner"></span> Logging...</> : 'Log Expense'}
+              </button>
             </form>
           </div>
         </div>
@@ -325,7 +335,9 @@ const Budget = () => {
                   <option value="Paid">Paid</option>
                 </select>
               </div>
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }}>Generate Invoice</button>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }} disabled={isSubmittingInvoice}>
+                {isSubmittingInvoice ? <><span className="btn-spinner"></span> Generating...</> : 'Generate Invoice'}
+              </button>
             </form>
           </div>
         </div>

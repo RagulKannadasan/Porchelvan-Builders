@@ -7,6 +7,8 @@ const Projects = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
   const [diaries, setDiaries] = useState([]);
+  const [isSubmittingProject, setIsSubmittingProject] = useState(false);
+  const [isSubmittingDiary, setIsSubmittingDiary] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // New Project Form State
@@ -52,6 +54,7 @@ const Projects = () => {
 
   const handleCreateProject = async (e) => {
     e.preventDefault();
+    setIsSubmittingProject(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/projects`, {
         method: 'POST',
@@ -65,6 +68,8 @@ const Projects = () => {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsSubmittingProject(false);
     }
   };
 
@@ -84,6 +89,7 @@ const Projects = () => {
     e.preventDefault();
     const projectId = selectedProject?.id || selectedProject?._id;
     if (!projectId) return;
+    setIsSubmittingDiary(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}/diaries`, {
         method: 'POST',
@@ -96,6 +102,8 @@ const Projects = () => {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsSubmittingDiary(false);
     }
   };
 
@@ -213,7 +221,9 @@ const Projects = () => {
                         />
                       </div>
                     </div>
-                    <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.85rem' }}>Submit Daily Log</button>
+                    <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.85rem' }} disabled={isSubmittingDiary}>
+                      {isSubmittingDiary ? <><span className="btn-spinner"></span> Submitting...</> : 'Submit Daily Log'}
+                    </button>
                   </form>
                 </div>
                 
@@ -300,7 +310,9 @@ const Projects = () => {
                   <option value="Completed">Completed</option>
                 </select>
               </div>
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.85rem' }}>Create Project</button>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '0.85rem' }} disabled={isSubmittingProject}>
+                {isSubmittingProject ? <><span className="btn-spinner"></span> Creating...</> : 'Create Project'}
+              </button>
             </form>
           </div>
         </div>

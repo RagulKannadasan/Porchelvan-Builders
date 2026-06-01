@@ -6,6 +6,7 @@ const Crew = () => {
   const [crewList, setCrewList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCrew, setNewCrew] = useState({ name: '', role: 'General Labor', phone: '', currentProject: '' });
 
@@ -33,6 +34,7 @@ const Crew = () => {
 
   const handleCreateCrew = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const dataToSubmit = { ...newCrew };
       if (!dataToSubmit.currentProject) delete dataToSubmit.currentProject; // Don't send empty string
@@ -47,7 +49,9 @@ const Crew = () => {
         setNewCrew({ name: '', role: 'General Labor', phone: '', currentProject: '' });
         fetchCrew();
       }
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleUpdateAssignment = async (crewId, projectId) => {
@@ -169,7 +173,9 @@ const Crew = () => {
                   ))}
                 </select>
               </div>
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }}>Save Crew Member</button>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }} disabled={isSubmitting}>
+                {isSubmitting ? <><span className="btn-spinner"></span> Saving...</> : 'Save Crew Member'}
+              </button>
             </form>
           </div>
         </div>

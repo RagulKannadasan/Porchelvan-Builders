@@ -6,6 +6,7 @@ const Inventory = () => {
   const [inventory, setInventory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Equipment'); // 'Equipment' or 'Material'
   
@@ -43,6 +44,7 @@ const Inventory = () => {
 
   const handleCreateItem = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const dataToSubmit = { ...newItem };
       if (!dataToSubmit.currentLocation) delete dataToSubmit.currentLocation;
@@ -57,7 +59,9 @@ const Inventory = () => {
         setNewItem({ name: '', type: activeTab, status: 'Available', quantity: 0, minQuantity: 0, unit: 'pieces', currentLocation: '' });
         fetchInventory();
       }
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleUpdateItem = async (id, updateFields) => {
@@ -293,7 +297,9 @@ const Inventory = () => {
                   ))}
                 </select>
               </div>
-              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }}>Save {newItem.type}</button>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }} disabled={isSubmitting}>
+                {isSubmitting ? <><span className="btn-spinner"></span> Saving...</> : `Save ${newItem.type}`}
+              </button>
             </form>
           </div>
         </div>
