@@ -150,7 +150,7 @@ export default function LandingPage() {
     .btn-nav:hover { opacity: 0.88; transform: translateY(-1px); }
 
     /* ── HERO ── */
-    .hero-wrapper { position: relative; width: 100%; min-height: 100vh; display: flex; align-items: center; overflow: hidden; padding-top: 80px; }
+    .hero-wrapper { position: relative; width: 100%; min-height: 100vh; display: flex; align-items: center; overflow-x: hidden; padding-top: 80px; }
     .hero { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; padding: 0 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; pointer-events: none; }
     .hero-left, .hero-right { pointer-events: auto; }
     .eyebrow {
