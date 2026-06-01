@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, HardHat, DollarSign, Users, Package, Calendar, Settings, Home, ShieldAlert, User, MessageSquare, CreditCard } from 'lucide-react';
+import { Menu, X, LayoutDashboard, HardHat, DollarSign, Users, Package, Calendar, Settings, Home, ShieldAlert, User, MessageSquare, CreditCard, LogOut, UserCheck } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import '../index.css';
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const { logout } = useAuth();
 
   const navItems = [
     { name: 'Dashboard', path: '/admin', icon: <LayoutDashboard size={20} /> },
+    { name: 'Client Access', path: '/admin/client-access', icon: <UserCheck size={20} /> },
     { name: 'Projects & Diaries', path: '/admin/projects', icon: <HardHat size={20} /> },
     { name: 'Budget & Invoices', path: '/admin/budget', icon: <DollarSign size={20} /> },
     { name: 'Transactions Log', path: '/admin/transactions', icon: <CreditCard size={20} /> },
@@ -42,7 +45,7 @@ const AdminLayout = () => {
       <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
           <div className="admin-logo-section">
-            <span className="logo-text" style={{letterSpacing: '-0.3px'}}>Porchelvan Builders</span>
+            <span className="logo-text" style={{ letterSpacing: '-0.3px' }}>Porchelvan Builders</span>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="close-btn-mobile">
             <X size={24} />
@@ -64,15 +67,22 @@ const AdminLayout = () => {
               </div>
             </Link>
           ))}
-          
+
           <div className="admin-nav-divider"></div>
-          
+
           <Link to="/" className="admin-nav-item public-site-link">
             <div className="nav-icon-wrapper"><Home size={20} /></div>
             <div className="nav-text-wrapper">
               <span className="nav-item-en">Back to Public Site</span>
             </div>
           </Link>
+
+          <button onClick={logout} className="admin-nav-item public-site-link" style={{ width: '100%', border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left', padding: '0.65rem 1.25rem', marginTop: 'auto' }}>
+            <div className="nav-icon-wrapper"><LogOut size={20} color="#ef4444" /></div>
+            <div className="nav-text-wrapper">
+              <span className="nav-item-en" style={{ color: '#ef4444', fontWeight: 600 }}>Log Out</span>
+            </div>
+          </button>
         </nav>
 
 

@@ -2,6 +2,8 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Drop existing tables if they exist to allow clean reinstall
+DROP TABLE IF EXISTS otps CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS inquiries CASCADE;
 DROP TABLE IF EXISTS vault_documents CASCADE;
 DROP TABLE IF EXISTS issues CASCADE;
@@ -148,3 +150,25 @@ CREATE INDEX idx_inventory_location ON inventory("currentLocation");
 CREATE INDEX idx_schedule_project ON schedule_events("projectId");
 CREATE INDEX idx_issues_project ON issues("projectId");
 CREATE INDEX idx_vault_project ON vault_documents("projectId");
+
+-- 11. Users Table
+CREATE TABLE users (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email text UNIQUE NOT NULL,
+  role text CHECK (role IN ('Admin', 'Site Manager', 'Client')) DEFAULT 'Client',
+  "assignedProject" uuid REFERENCES projects(id) ON DELETE SET NULL,
+  "createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+  "updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+-- 12. OTPs Table
+CREATE TABLE otps (
+  id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email text NOT NULL,
+  code text NOT NULL,
+  "expiresAt" timestamp with time zone NOT NULL,
+  "createdAt" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+CREATE INDEX idx_users_project ON users("assignedProject");
+CREATE INDEX idx_otps_email ON otps(email);

@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const sql = require('./db');
 require('dotenv').config();
 
@@ -532,6 +534,140 @@ app.delete('/api/inquiries/:id', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to delete inquiry" });
+    }
+});
+
+// --- AUTH ROUTES ---
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecret_development_key';
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.ethereal.email',
+    port: process.env.SMTP_PORT || 587,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+    }
+});
+
+app.post('/api/auth/request-otp', async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) return res.status(400).json({ error: "Email is required" });
+
+        let code = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 10 * 60000); // 10 mins
+
+        // TEMPORARY BYPASS FOR ADMIN TESTING
+        if (email === 'porchelvanbuilders.er@gmail.com') {
+            code = '123456';
+        }
+
+        const usersCount = await sql`SELECT count(*) FROM users`;
+        let userRole = 'Client';
+        
+        let [existingUser] = await sql`SELECT * FROM users WHERE email = ${email}`;
+        
+        if (email === 'porchelvanbuilders.er@gmail.com') {
+            userRole = 'Admin';
+            if (existingUser && existingUser.role !== 'Admin') {
+                [existingUser] = await sql`UPDATE users SET role = 'Admin' WHERE email = ${email} RETURNING *`;
+            }
+        } else if (!existingUser) {
+            if (parseInt(usersCount[0].count) === 0) {
+                userRole = 'Admin';
+            }
+        }
+        
+        if (!existingUser) {
+            [existingUser] = await sql`
+                INSERT INTO users (email, role) VALUES (${email}, ${userRole}) RETURNING *
+            `;
+        }
+
+        await sql`DELETE FROM otps WHERE email = ${email}`;
+        await sql`INSERT INTO otps (email, code, "expiresAt") VALUES (${email}, ${code}, ${expiresAt})`;
+
+        console.log(`\n\n--- DEVELOPMENT OTP FOR ${email}: ${code} ---\n\n`);
+        
+        if (process.env.SMTP_USER && email !== 'porchelvanbuilders.er@gmail.com') {
+            await transporter.sendMail({
+                from: `"Porchelvan Builders" <${process.env.SMTP_USER}>`,
+                to: email,
+                subject: 'Your Login Code',
+                text: `Your login code is ${code}. It expires in 10 minutes.`
+            });
+        }
+
+        res.json({ message: "OTP sent successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to process OTP request" });
+    }
+});
+
+app.post('/api/auth/verify-otp', async (req, res) => {
+    try {
+        const { email, code } = req.body;
+        const [otpRecord] = await sql`SELECT * FROM otps WHERE email = ${email} AND code = ${code}`;
+        
+        if (!otpRecord) return res.status(400).json({ error: "Invalid code" });
+        if (new Date(otpRecord.expiresAt) < new Date()) {
+            await sql`DELETE FROM otps WHERE id = ${otpRecord.id}`;
+            return res.status(400).json({ error: "Code expired" });
+        }
+
+        await sql`DELETE FROM otps WHERE email = ${email}`;
+        
+        const [user] = await sql`SELECT * FROM users WHERE email = ${email}`;
+        const token = jwt.sign({ id: user.id, email: user.email, role: user.role, assignedProject: user.assignedProject }, JWT_SECRET, { expiresIn: '7d' });
+        
+        res.json({ token, user });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to verify OTP" });
+    }
+});
+
+app.get('/api/auth/me', async (req, res) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ error: "Unauthorized" });
+
+    jwt.verify(token, JWT_SECRET, async (err, decoded) => {
+        if (err) return res.status(403).json({ error: "Forbidden" });
+        const [user] = await sql`SELECT * FROM users WHERE id = ${decoded.id}`;
+        if (!user) return res.status(404).json({ error: "User not found" });
+        res.json(user);
+    });
+});
+
+// --- USER MANAGEMENT ROUTES ---
+app.get('/api/users/clients', async (req, res) => {
+    try {
+        const clients = await sql`SELECT * FROM users WHERE role = 'Client' ORDER BY "createdAt" DESC`;
+        res.json(clients);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to fetch clients" });
+    }
+});
+
+app.put('/api/users/clients/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { assignedProject } = req.body;
+        
+        const [updatedUser] = await sql`
+            UPDATE users 
+            SET "assignedProject" = ${assignedProject || null}, "updatedAt" = now() 
+            WHERE id = ${id} AND role = 'Client'
+            RETURNING *
+        `;
+        
+        if (!updatedUser) return res.status(404).json({ error: "Client not found" });
+        res.json(updatedUser);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to update client project access" });
     }
 });
 
