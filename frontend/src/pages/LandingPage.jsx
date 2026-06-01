@@ -358,7 +358,7 @@ export default function LandingPage() {
       .proc-img { display:none; }
       .svc-grid { grid-template-columns: repeat(2,1fr); }
       .foot-grid { grid-template-columns: 1fr 1fr; }
-      .testi-grid { grid-template-columns:1fr; }
+      .testi-grid { grid-template-columns: repeat(2,1fr); }
     }
     @media(max-width:768px){
       .nav-links { display:none; }
@@ -366,6 +366,7 @@ export default function LandingPage() {
       .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
       .svc-grid { grid-template-columns:1fr; }
       .prj-grid { grid-template-columns:1fr; }
+      .testi-grid { grid-template-columns:1fr; }
       .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
       .contact-info, .contact-form { padding: 2rem; }
       .form-row { grid-template-columns: 1fr; gap: 1rem; }
@@ -375,7 +376,8 @@ export default function LandingPage() {
     }
     @media(max-width:480px){
       .hero { padding: 0 1.5rem 3rem; }
-      .hero-h1 { font-size: 2.4rem; }
+      .hero-h1 { font-size: 2.2rem; }
+      .hero-p { padding: 0 0.5rem; font-size: 0.95rem; line-height: 1.6; }
       .sec-w { padding: 0 1.5rem; }
       .nav-w { padding: 0 1.5rem; }
       .foot-w { padding: 0 1.5rem; }

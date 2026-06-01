@@ -3,6 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ConstructionAnimation2D() {
   const [step, setStep] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Cinematic 15-Second Workflow
   useEffect(() => {
@@ -108,7 +116,7 @@ export default function ConstructionAnimation2D() {
       style={{
         position: 'relative',
         width: '100%',
-        aspectRatio: '5 / 4',
+        aspectRatio: isMobile ? '1 / 1.1' : '5 / 4',
         minHeight: '300px',
         maxHeight: '700px',
         display: 'flex',
@@ -119,7 +127,7 @@ export default function ConstructionAnimation2D() {
     >
       <AnimatePresence>
         <svg
-          viewBox="0 0 1000 800"
+          viewBox={isMobile ? "150 50 750 750" : "0 0 1000 800"}
           style={{ width: '100%', height: '100%', maxWidth: '1000px', overflow: 'visible' }}
         >
           <defs>
