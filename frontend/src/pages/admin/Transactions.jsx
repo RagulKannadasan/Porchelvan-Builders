@@ -156,10 +156,10 @@ const Transactions = () => {
 
       {/* Loading Overlay */}
       {loading ? (
-        <div className="ledger-loading-state">
-          <CreditCard size={48} className="spin-slow" style={{ color: 'var(--brand-orange)', marginBottom: '1rem' }} />
-          <h3>Consolidating Financial Ledger...</h3>
-          <p className="text-muted">Fetching cashflow statements from all ongoing construction sites.</p>
+        <div className="admin-loading-state" style={{ height: '350px' }}>
+          <div className="admin-spinner"></div>
+          <h3 style={{ margin: '0' }}>Consolidating Financial Ledger...</h3>
+          <p className="text-muted" style={{ margin: '0' }}>Fetching cashflow statements from all ongoing construction sites.</p>
         </div>
       ) : (
         <>

@@ -4,6 +4,7 @@ import API_BASE_URL from '../../utils/api';
 
 const Crew = () => {
   const [crewList, setCrewList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newCrew, setNewCrew] = useState({ name: '', role: 'General Labor', phone: '', currentProject: '' });
@@ -14,10 +15,13 @@ const Crew = () => {
   }, []);
 
   const fetchCrew = async () => {
+    setIsLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/crew`);
       if (res.ok) setCrewList(await res.json());
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchProjects = async () => {
@@ -78,7 +82,12 @@ const Crew = () => {
       </div>
 
       <div className="crew-grid">
-        {crewList.length === 0 ? (
+        {isLoading ? (
+          <div className="admin-loading-state" style={{ gridColumn: '1 / -1' }}>
+            <div className="admin-spinner"></div>
+            <p>Loading crew members...</p>
+          </div>
+        ) : crewList.length === 0 ? (
           <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
             <Users size={48} />
             <h3>No Crew Members Yet</h3>

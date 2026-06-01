@@ -4,6 +4,7 @@ import API_BASE_URL from '../../utils/api';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
   const [diaries, setDiaries] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,6 +20,7 @@ const Projects = () => {
   }, []);
 
   const fetchProjects = async () => {
+    setIsLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/projects`);
       if (!res.ok) throw new Error();
@@ -26,6 +28,8 @@ const Projects = () => {
       setProjects(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Failed to fetch projects");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -115,7 +119,12 @@ const Projects = () => {
               <h3>All Projects</h3>
             </div>
             <div className="project-list">
-              {projects.length === 0 ? (
+              {isLoading ? (
+                <div className="admin-loading-state">
+                  <div className="admin-spinner"></div>
+                  <p>Loading projects...</p>
+                </div>
+              ) : projects.length === 0 ? (
                 <div style={{ padding: '3rem 2rem', textAlign: 'center', color: 'var(--admin-text-muted)' }}>
                   No projects found.
                 </div>

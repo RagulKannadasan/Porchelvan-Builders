@@ -13,6 +13,7 @@ const Dashboard = () => {
   });
 
   const [refreshing, setRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchStats = async () => {
     setRefreshing(true);
@@ -27,6 +28,7 @@ const Dashboard = () => {
     } finally {
       setTimeout(() => {
         setRefreshing(false);
+        setIsLoading(false);
       }, 500);
     }
   };
@@ -38,6 +40,17 @@ const Dashboard = () => {
   const handleRefresh = () => {
     fetchStats();
   };
+
+  if (isLoading) {
+    return (
+      <div className="minimal-dashboard animate-fade-in" style={{ justifyContent: 'center', height: '100%' }}>
+        <div className="admin-loading-state">
+          <div className="admin-spinner"></div>
+          <p>Loading dashboard metrics...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="minimal-dashboard animate-fade-in">

@@ -392,12 +392,12 @@ export default function LandingPage() {
   ];
 
   const services = [
-    { icon: <Home size={20} />, title: 'Custom Homes', desc: 'Bespoke residences built around your vision, lifestyle, and budget.' },
-    { icon: <Building size={20} />, title: 'Commercial Spaces', desc: 'Offices, retail, and hospitality projects built for lasting impact.' },
-    { icon: <HardHat size={20} />, title: 'Renovation', desc: 'Expert renovation that breathes new life into existing structures.' },
-    { icon: <Shield size={20} />, title: '10-Year Warranty', desc: 'Every build backed by our comprehensive structural guarantee.' },
-    { icon: <Zap size={20} />, title: 'Smart Home Tech', desc: 'Seamlessly integrated automation from day one of construction.' },
-    { icon: <Clock size={20} />, title: 'On-Time Delivery', desc: '96% on-time track record. We don\'t make promises we can\'t keep.' },
+    { icon: <Building size={20} />, title: 'Construction', desc: 'Expert residential and commercial construction from foundation to finish.' },
+    { icon: <HardHat size={20} />, title: 'Architect & Design', desc: 'Innovative concepts and creative design tailored to your vision.' },
+    { icon: <Home size={20} />, title: 'Interiors', desc: 'Premium interior design and execution for a flawless living space.' },
+    { icon: <MapPin size={20} />, title: 'Real Estate', desc: 'Trusted guidance and solutions for your real estate investments.' },
+    { icon: <Shield size={20} />, title: 'Building Approval', desc: 'Hassle-free navigation of building approvals and legal compliance.' },
+    { icon: <Zap size={20} />, title: 'Loan Arrangement', desc: 'Seamless assistance with financial planning and home loan arrangements.' },
   ];
 
   const testimonials = [
@@ -483,8 +483,8 @@ export default function LandingPage() {
               <HardHat size={14} style={{ color: 'var(--accent)' }} />
               <span style={{ fontSize: '0.82rem', fontWeight: '700', color: 'var(--text)' }}>Porchelvan Support</span>
             </div>
-            <a href="tel:+919876543210" style={{ fontSize: '0.78rem', color: 'var(--muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <Phone size={11} /> +91 98765 43210
+            <a href="tel:+919751061442" style={{ fontSize: '0.78rem', color: 'var(--muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Phone size={11} /> +91 97510 61442
             </a>
           </div>
         </div>
@@ -496,7 +496,7 @@ export default function LandingPage() {
           <div className="hero-left">
             <div className="eyebrow"><div className="eyebrow-dot" />Thanjavur's Premier Builder</div>
             <h1 className="hero-h1">Let's build your<br />dream home <span>together.</span></h1>
-            <p className="hero-p">From our roots in Thanjavur, Porchelvan Builders has become the Delta region's most trusted name in residential and commercial construction — blending craftsmanship with modern precision.</p>
+            <p className="hero-p">From our roots in Thanjavur, Porchelvan Builders is the Delta region's most trusted name in residential and commercial construction — delivering innovative concepts, creative design, and flawless execution.</p>
             <div className="hero-actions">
               <button className="btn-primary">Explore Projects <ArrowRight size={15} /></button>
               <button className="btn-outline">
@@ -646,21 +646,21 @@ export default function LandingPage() {
                 <div className="contact-icon"><Phone size={20} /></div>
                 <div className="contact-text">
                   <h4>Call Us Directly</h4>
-                  <p>+91 98765 43210<br />Mon-Sat: 9AM - 6PM</p>
+                  <p>+91 97510 61442, +91 97510 66222<br />Mon-Sat: 9AM - 6PM</p>
                 </div>
               </div>
               <div className="contact-info-item">
                 <div className="contact-icon"><Mail size={20} /></div>
                 <div className="contact-text">
                   <h4>Email Enquiries</h4>
-                  <p>hello@porchelvan.com<br />projects@porchelvan.com</p>
+                  <p>porchelvanbuilders.er@gmail.com</p>
                 </div>
               </div>
               <div className="contact-info-item">
                 <div className="contact-icon"><MapPin size={20} /></div>
                 <div className="contact-text">
                   <h4>Head Office</h4>
-                  <p>42, Medical College Road,<br />Thanjavur, Tamil Nadu 613004</p>
+                  <p>137, West Street, Kavarappattu,<br />Orathanadu, Thanjavur - 614625</p>
                 </div>
               </div>
             </div>
@@ -719,11 +719,11 @@ export default function LandingPage() {
               <a href="#" className="logo">
                 <span className="logo-name">Porchelvan <span className="logo-accent">Builders</span></span>
               </a>
-              <p>Building the finest homes since 1996, headquartered in Thanjavur with projects across the Delta region.</p>
+              <p>Founded by Er. J. Arulmozhiselvan B.E., building the finest homes with projects across the Delta region.</p>
               <div className="foot-contact">
-                <a href="tel:+919876543210"><Phone size={13} /> +91 98765 43210</a>
-                <a href="mailto:hello@porchelvan.com"><Mail size={13} /> hello@porchelvan.com</a>
-                <a href="#"><MapPin size={13} /> 42, Medical College Rd, Thanjavur</a>
+                <a href="tel:+919751061442"><Phone size={13} /> +91 97510 61442</a>
+                <a href="mailto:porchelvanbuilders.er@gmail.com"><Mail size={13} /> porchelvanbuilders.er@gmail.com</a>
+                <a href="#"><MapPin size={13} /> 137, West St, Kavarappattu, Thanjavur</a>
               </div>
             </div>
             {[

@@ -4,8 +4,10 @@ import API_BASE_URL from '../../utils/api';
 
 const Budget = () => {
   const [projects, setProjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
   const [budgetData, setBudgetData] = useState({ expenses: [], invoices: [] });
+  const [isBudgetLoading, setIsBudgetLoading] = useState(false);
   
   // Modals
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
@@ -20,19 +22,25 @@ const Budget = () => {
   }, []);
 
   const fetchProjects = async () => {
+    setIsLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/projects`);
       if (res.ok) setProjects(await res.json());
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchBudgetData = async (projectId) => {
+    setIsBudgetLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/projects/${projectId}/budget`);
       if (res.ok) {
         setBudgetData(await res.json());
       }
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsBudgetLoading(false);
+    }
   };
 
   const handleSelectProject = (project) => {
@@ -107,7 +115,14 @@ const Budget = () => {
             <h3>Select Project</h3>
           </div>
           <div className="project-list">
-            {projects.map(p => (
+            {isLoading ? (
+              <div className="admin-loading-state" style={{ height: '200px' }}>
+                <div className="admin-spinner" style={{ width: '30px', height: '30px' }}></div>
+              </div>
+            ) : projects.length === 0 ? (
+              <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--admin-text-muted)' }}>No projects</div>
+            ) : (
+              projects.map(p => (
               <div 
                 key={p._id} 
                 className={`project-item ${selectedProject?._id === p._id ? 'selected' : ''}`}
@@ -164,7 +179,11 @@ const Budget = () => {
                     </button>
                   </div>
                   <div className="list-body">
-                    {budgetData.expenses.length === 0 ? <p className="text-muted text-center" style={{padding: '2rem'}}>No expenses logged.</p> : (
+                    {isBudgetLoading ? (
+                      <div className="admin-loading-state" style={{ height: '150px' }}>
+                        <div className="admin-spinner" style={{ width: '30px', height: '30px' }}></div>
+                      </div>
+                    ) : budgetData.expenses.length === 0 ? <p className="text-muted text-center" style={{padding: '2rem'}}>No expenses logged.</p> : (
                       <table className="budget-table">
                         <thead>
                           <tr>
@@ -198,7 +217,11 @@ const Budget = () => {
                     </button>
                   </div>
                   <div className="list-body">
-                    {budgetData.invoices.length === 0 ? <p className="text-muted text-center" style={{padding: '2rem'}}>No invoices created.</p> : (
+                    {isBudgetLoading ? (
+                      <div className="admin-loading-state" style={{ height: '150px' }}>
+                        <div className="admin-spinner" style={{ width: '30px', height: '30px' }}></div>
+                      </div>
+                    ) : budgetData.invoices.length === 0 ? <p className="text-muted text-center" style={{padding: '2rem'}}>No invoices created.</p> : (
                       <table className="budget-table">
                         <thead>
                           <tr>

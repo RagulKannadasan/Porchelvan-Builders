@@ -4,6 +4,7 @@ import API_BASE_URL from '../../utils/api';
 
 const Inventory = () => {
   const [inventory, setInventory] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Equipment'); // 'Equipment' or 'Material'
@@ -24,10 +25,13 @@ const Inventory = () => {
   }, []);
 
   const fetchInventory = async () => {
+    setIsLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/inventory`);
       if (res.ok) setInventory(await res.json());
-    } catch (err) {}
+    } catch (err) {} finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchProjects = async () => {
@@ -111,7 +115,12 @@ const Inventory = () => {
       {activeTab === 'Equipment' && (
         <div className="inventory-section card">
           <div className="list-body">
-            {equipmentList.length === 0 ? <p className="empty-state">No equipment recorded.</p> : (
+            {isLoading ? (
+              <div className="admin-loading-state">
+                <div className="admin-spinner"></div>
+                <p>Loading equipment...</p>
+              </div>
+            ) : equipmentList.length === 0 ? <p className="empty-state">No equipment recorded.</p> : (
               <table className="inventory-table">
                 <thead>
                   <tr>
@@ -164,7 +173,12 @@ const Inventory = () => {
       {activeTab === 'Material' && (
         <div className="inventory-section card">
           <div className="list-body">
-            {materialList.length === 0 ? <p className="empty-state">No materials recorded.</p> : (
+            {isLoading ? (
+              <div className="admin-loading-state">
+                <div className="admin-spinner"></div>
+                <p>Loading materials...</p>
+              </div>
+            ) : materialList.length === 0 ? <p className="empty-state">No materials recorded.</p> : (
               <table className="inventory-table">
                 <thead>
                   <tr>

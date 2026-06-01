@@ -7,6 +7,7 @@ const Scheduling = () => {
   const [projects, setProjects] = useState([]);
   const [crew, setCrew] = useState([]);
   const [equipment, setEquipment] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [newEvent, setNewEvent] = useState({
@@ -20,10 +21,17 @@ const Scheduling = () => {
   });
 
   useEffect(() => {
-    fetchEvents();
-    fetchProjects();
-    fetchCrew();
-    fetchEquipment();
+    const loadData = async () => {
+      setIsLoading(true);
+      await Promise.all([
+        fetchEvents(),
+        fetchProjects(),
+        fetchCrew(),
+        fetchEquipment()
+      ]);
+      setIsLoading(false);
+    };
+    loadData();
   }, []);
 
   const fetchEvents = async () => {
@@ -102,7 +110,12 @@ const Scheduling = () => {
       </div>
 
       <div className="timeline-container">
-        {Object.keys(groupedEvents).length === 0 ? (
+        {isLoading ? (
+          <div className="admin-loading-state">
+            <div className="admin-spinner"></div>
+            <p>Loading schedule...</p>
+          </div>
+        ) : Object.keys(groupedEvents).length === 0 ? (
           <div className="empty-state">
             <Calendar size={48} />
             <h3>No Active Schedules</h3>

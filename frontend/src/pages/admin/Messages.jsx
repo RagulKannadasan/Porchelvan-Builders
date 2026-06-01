@@ -5,12 +5,14 @@ import API_BASE_URL from '../../utils/api';
 const Messages = () => {
   const [inquiries, setInquiries] = useState([]);
   const [selectedInquiry, setSelectedInquiry] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchInquiries();
   }, []);
 
   const fetchInquiries = async () => {
+    setIsLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/inquiries`);
       if (res.ok) {
@@ -19,6 +21,8 @@ const Messages = () => {
       }
     } catch (err) {
       console.error("Failed to fetch inquiries");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -66,7 +70,12 @@ const Messages = () => {
               <h3>All Inquiries</h3>
             </div>
             <div className="inquiry-list">
-              {inquiries.length === 0 ? (
+              {isLoading ? (
+                <div className="admin-loading-state">
+                  <div className="admin-spinner"></div>
+                  <p>Loading messages...</p>
+                </div>
+              ) : inquiries.length === 0 ? (
                 <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--admin-text-muted)' }}>
                   No messages found.
                 </div>

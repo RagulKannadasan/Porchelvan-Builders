@@ -438,6 +438,31 @@ const AdminLayout = () => {
             padding: 1.5rem 1rem;
           }
         }
+
+        /* Shared Loading State */
+        .admin-loading-state {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 350px;
+          color: var(--admin-text-muted);
+          gap: 1.25rem;
+          animation: fadeIn 0.4s ease-out;
+        }
+
+        .admin-spinner {
+          width: 42px;
+          height: 42px;
+          border: 3px solid var(--admin-border);
+          border-top-color: var(--brand-orange);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
       `}</style>
     </div>
   );

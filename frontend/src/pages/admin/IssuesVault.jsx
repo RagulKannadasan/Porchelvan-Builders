@@ -6,6 +6,7 @@ const IssuesVault = () => {
   const [activeTab, setActiveTab] = useState('Issues');
   const [issues, setIssues] = useState([]);
   const [vaultDocs, setVaultDocs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -14,9 +15,12 @@ const IssuesVault = () => {
   const [newDoc, setNewDoc] = useState({ title: '', projectId: '', url: '', type: 'Blueprint' });
 
   useEffect(() => {
-    fetchIssues();
-    fetchVaultDocs();
-    fetchProjects();
+    const loadData = async () => {
+      setIsLoading(true);
+      await Promise.all([fetchIssues(), fetchVaultDocs(), fetchProjects()]);
+      setIsLoading(false);
+    };
+    loadData();
   }, []);
 
   const fetchIssues = async () => {
@@ -128,7 +132,12 @@ const IssuesVault = () => {
 
       {activeTab === 'Issues' && (
         <div className="issues-grid">
-          {issues.length === 0 ? (
+          {isLoading ? (
+            <div className="admin-loading-state" style={{ gridColumn: '1 / -1' }}>
+              <div className="admin-spinner"></div>
+              <p>Loading issues...</p>
+            </div>
+          ) : issues.length === 0 ? (
             <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
               <ShieldAlert size={48} />
               <h3>No Active Issues</h3>
@@ -168,7 +177,12 @@ const IssuesVault = () => {
 
       {activeTab === 'Vault' && (
         <div className="vault-grid card">
-          {vaultDocs.length === 0 ? (
+          {isLoading ? (
+            <div className="admin-loading-state">
+              <div className="admin-spinner"></div>
+              <p>Loading documents...</p>
+            </div>
+          ) : vaultDocs.length === 0 ? (
             <div className="empty-state">
               <FileText size={48} />
               <h3>Vault is Empty</h3>
