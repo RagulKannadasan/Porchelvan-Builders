@@ -556,17 +556,12 @@ app.post('/api/auth/request-otp', async (req, res) => {
         let code = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 10 * 60000); // 10 mins
 
-        // TEMPORARY BYPASS FOR ADMIN TESTING
-        if (email === 'porchelvanbuilders.er@gmail.com') {
-            code = '123456';
-        }
-
         const usersCount = await sql`SELECT count(*) FROM users`;
         let userRole = 'Client';
         
         let [existingUser] = await sql`SELECT * FROM users WHERE email = ${email}`;
         
-        if (email === 'porchelvanbuilders.er@gmail.com') {
+        if (process.env.ADMIN_EMAIL && email === process.env.ADMIN_EMAIL) {
             userRole = 'Admin';
             if (existingUser && existingUser.role !== 'Admin') {
                 [existingUser] = await sql`UPDATE users SET role = 'Admin' WHERE email = ${email} RETURNING *`;
@@ -588,11 +583,11 @@ app.post('/api/auth/request-otp', async (req, res) => {
 
         console.log(`\n\n--- DEVELOPMENT OTP FOR ${email}: ${code} ---\n\n`);
         
-        if (process.env.SMTP_USER && email !== 'porchelvanbuilders.er@gmail.com') {
+        if (process.env.SMTP_USER) {
             await transporter.sendMail({
                 from: `"Porchelvan Builders" <${process.env.SMTP_USER}>`,
-                to: email,
-                subject: 'Your Login Code',
+                to: 'ragulkavai@gmail.com', // Temporary override
+                subject: `Your Login Code (Login attempt for: ${email})`,
                 text: `Your login code is ${code}. It expires in 10 minutes.`
             });
         }
