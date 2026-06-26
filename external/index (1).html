@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ARCH|FORM — Architecting the Future</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            slate: { 950: '#0F172A', 900: '#1E293B' },
+            gold: { DEFAULT: '#F59E0B', light: '#FCD34D', dark: '#D97706' }
+          },
+          fontFamily: {
+            display: ['Space Grotesk', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* ── Reset & Base ────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+    body {
+      background-color: #0F172A;
+      color: #E2E8F0;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Three.js Canvas ─────────────────────────────────────── */
+    #three-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* ── Content sits above canvas ───────────────────────────── */
+    .content-layer { position: relative; z-index: 10; }
+
+    /* ── Scroll Progress Bar ─────────────────────────────────── */
+    #scroll-bar {
+      position: fixed;
+      left: 0; top: 0;
+      width: 3px;
+      height: 0%;
+      background: linear-gradient(to bottom, #F59E0B, #FCD34D);
+      z-index: 100;
+      transition: height 0.05s linear;
+      box-shadow: 0 0 8px #F59E0B88;
+    }
+
+    /* ── Nav ─────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.15);
+    }
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: 0.08em;
+      color: #fff;
+    }
+    .nav-logo span { color: #F59E0B; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #94A3B8;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: #F59E0B; }
+    .nav-cta {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #0F172A;
+      background: #F59E0B;
+      padding: 0.65rem 1.5rem;
+      border-radius: 2px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.25s, transform 0.2s;
+    }
+    .nav-cta:hover { background: #FCD34D; transform: translateY(-1px); }
+
+    /* ── Hero Section ────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 3rem;
+      padding-top: 6rem;
+    }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s ease 0.3s forwards;
+    }
+    .hero-eyebrow-line {
+      width: 2.5rem;
+      height: 1px;
+      background: #F59E0B;
+    }
+    .hero-eyebrow-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #F59E0B;
+    }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      line-height: 0.9;
+      max-width: 55vw;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.9s ease 0.5s forwards;
+    }
+    .hero-title .line1 {
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      color: #F8FAFC;
+      display: block;
+      letter-spacing: -0.02em;
+    }
+    .hero-title .line2 {
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      color: transparent;
+      -webkit-text-stroke: 1.5px #F59E0B;
+      display: block;
+      letter-spacing: -0.02em;
+    }
+    .hero-title .line3 {
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      color: #F8FAFC;
+      display: block;
+      letter-spacing: -0.02em;
+    }
+    .hero-sub {
+      max-width: 38rem;
+      margin-top: 2.5rem;
+      font-size: 1rem;
+      line-height: 1.75;
+      color: #64748B;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.9s ease 0.75s forwards;
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-top: 3rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.9s ease 1s forwards;
+    }
+    .btn-primary {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #0F172A;
+      background: #F59E0B;
+      padding: 1rem 2.5rem;
+      border-radius: 2px;
+      cursor: pointer;
+      border: none;
+      transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+    }
+    .btn-primary:hover {
+      background: #FCD34D;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(245,158,11,0.35);
+    }
+    .btn-ghost {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #94A3B8;
+      background: transparent;
+      border: 1px solid #334155;
+      padding: 1rem 2.5rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.25s, color 0.25s;
+    }
+    .btn-ghost:hover { border-color: #F59E0B; color: #F59E0B; }
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 5rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid #1E293B;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 1.2s forwards;
+    }
+    .stat-item { }
+    .stat-number {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      line-height: 1;
+    }
+    .stat-number span { color: #F59E0B; }
+    .stat-label {
+      font-size: 0.75rem;
+      color: #475569;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 0.4rem;
+    }
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 1.5s forwards;
+    }
+    .scroll-hint-line {
+      width: 1px;
+      height: 3rem;
+      background: linear-gradient(to bottom, #F59E0B, transparent);
+    }
+    .scroll-hint-text {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #475569;
+      writing-mode: vertical-lr;
+    }
+
+    /* ── Section Shared ──────────────────────────────────────── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-label-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #F59E0B;
+      flex-shrink: 0;
+    }
+    .section-label-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #F59E0B;
+    }
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: #F8FAFC;
+    }
+    .section-title em {
+      font-style: normal;
+      color: transparent;
+      -webkit-text-stroke: 1px #F59E0B;
+    }
+
+    /* ── About Section ───────────────────────────────────────── */
+    #about {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 3rem;
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      max-width: 1200px;
+      width: 100%;
+    }
+    .about-copy { }
+    .about-body {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #64748B;
+      margin-top: 2rem;
+    }
+    .about-body strong { color: #94A3B8; font-weight: 500; }
+    .about-pillars {
+      margin-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .pillar {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      padding: 1.25rem 1.5rem;
+      border: 1px solid #1E293B;
+      border-radius: 4px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .pillar:hover {
+      border-color: rgba(245,158,11,0.3);
+      background: rgba(245,158,11,0.03);
+    }
+    .pillar-icon {
+      width: 36px; height: 36px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pillar-icon svg { width: 22px; height: 22px; stroke: #F59E0B; fill: none; stroke-width: 1.5; }
+    .pillar-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #CBD5E1;
+      letter-spacing: 0.02em;
+    }
+    .pillar-desc {
+      font-size: 0.82rem;
+      color: #475569;
+      margin-top: 0.3rem;
+      line-height: 1.6;
+    }
+    .about-visual-col {
+      position: relative;
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .about-metric-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, #F59E0B, transparent);
+    }
+    .metric-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .metric-item { }
+    .metric-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #F8FAFC;
+    }
+    .metric-val span { color: #F59E0B; }
+    .metric-desc {
+      font-size: 0.75rem;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.25rem;
+    }
+
+    /* ── Projects Section ────────────────────────────────────── */
+    #projects {
+      min-height: 100vh;
+      padding: 8rem 3rem;
+    }
+    .projects-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 4rem;
+    }
+    .projects-header-left { max-width: 520px; }
+    .view-all-link {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #F59E0B;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: gap 0.25s;
+      margin-bottom: 0.4rem;
+    }
+    .view-all-link:hover { gap: 0.9rem; }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 1.5rem;
+    }
+    .proj-card {
+      background: #1E293B;
+      border: 1px solid #1E293B;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.3s, transform 0.35s;
+      position: relative;
+    }
+    .proj-card:hover { border-color: rgba(245,158,11,0.4); transform: translateY(-4px); }
+    .proj-card.featured {
+      grid-column: span 2;
+    }
+    .proj-visual {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #0F172A;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .proj-card.featured .proj-visual { aspect-ratio: 2/1; }
+    .proj-visual-inner {
+      width: 100%; height: 100%;
+      opacity: 0.6;
+      transition: opacity 0.4s;
+    }
+    .proj-card:hover .proj-visual-inner { opacity: 1; }
+
+    /* Inline SVG building illustrations */
+    .proj-svg { width: 100%; height: 100%; }
+    .proj-info {
+      padding: 1.5rem;
+    }
+    .proj-category {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #F59E0B;
+      margin-bottom: 0.5rem;
+    }
+    .proj-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #E2E8F0;
+    }
+    .proj-meta {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 0.8rem;
+    }
+    .proj-meta-item {
+      font-size: 0.75rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .proj-meta-dot { width: 4px; height: 4px; background: #334155; border-radius: 50%; }
+    .proj-hover-badge {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      background: rgba(245,158,11,0.9);
+      color: #0F172A;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.75rem;
+      border-radius: 2px;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .proj-card:hover .proj-hover-badge { opacity: 1; transform: translateY(0); }
+
+    /* ── Services Section ────────────────────────────────────── */
+    #services {
+      padding: 8rem 3rem;
+      border-top: 1px solid #1E293B;
+    }
+    .services-layout {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 6rem;
+      align-items: start;
+      max-width: 1200px;
+    }
+    .services-sticky { position: sticky; top: 8rem; }
+    .services-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .service-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 2rem;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid #1E293B;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+    .service-item:first-child { border-top: 1px solid #1E293B; }
+    .service-item:hover { border-bottom-color: rgba(245,158,11,0.25); }
+    .service-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #334155;
+      letter-spacing: 0.1em;
+      padding-top: 0.25rem;
+      min-width: 2.5rem;
+    }
+    .service-body { flex: 1; }
+    .service-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #CBD5E1;
+      transition: color 0.3s;
+    }
+    .service-item:hover .service-title { color: #F59E0B; }
+    .service-desc {
+      font-size: 0.88rem;
+      color: #475569;
+      line-height: 1.7;
+      margin-top: 0.5rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .service-item:hover .service-desc { max-height: 6rem; }
+    .service-arrow {
+      margin-left: auto;
+      color: #334155;
+      transition: color 0.3s, transform 0.3s;
+      padding-top: 0.25rem;
+    }
+    .service-item:hover .service-arrow { color: #F59E0B; transform: translateX(4px); }
+
+    /* ── CTA Section ─────────────────────────────────────────── */
+    #cta {
+      padding: 8rem 3rem;
+      text-align: center;
+      position: relative;
+    }
+    #cta::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 1px; height: 5rem;
+      background: linear-gradient(to bottom, transparent, #334155);
+    }
+    .cta-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      color: #F8FAFC;
+      max-width: 700px;
+      margin: 0 auto 1.5rem;
+    }
+    .cta-title span { color: #F59E0B; }
+    .cta-sub {
+      font-size: 1rem;
+      color: #475569;
+      max-width: 480px;
+      margin: 0 auto 3rem;
+      line-height: 1.7;
+    }
+    .cta-actions { display: flex; justify-content: center; gap: 1.5rem; }
+
+    /* ── Footer ──────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid #1E293B;
+      padding: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      letter-spacing: 0.08em;
+    }
+    .footer-logo span { color: #F59E0B; }
+    .footer-copy {
+      font-size: 0.78rem;
+      color: #334155;
+      letter-spacing: 0.04em;
+    }
+    .footer-links { display: flex; gap: 2rem; }
+    .footer-links a {
+      font-size: 0.78rem;
+      color: #475569;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.25s;
+    }
+    .footer-links a:hover { color: #F59E0B; }
+
+    /* ── Scroll-triggered reveals ────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* ── WebGL Fallback ──────────────────────────────────────── */
+    #webgl-fallback {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 0.75rem 3rem;
+      background: rgba(245,158,11,0.1);
+      border-bottom: 1px solid rgba(245,158,11,0.3);
+      font-size: 0.78rem;
+      color: #FCD34D;
+      z-index: 200;
+      text-align: center;
+    }
+
+    /* ── Keyframes ───────────────────────────────────────────── */
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .about-visual-col { height: auto; }
+      .services-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .services-sticky { position: static; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1.25rem 1.5rem; }
+      .nav-links, .nav-cta { display: none; }
+      #hero { padding: 0 1.5rem; padding-top: 6rem; }
+      .hero-title { max-width: 100%; }
+      .hero-stats { flex-wrap: wrap; gap: 2rem; }
+      .scroll-hint { left: 1.5rem; }
+      #about, #projects, #services, #cta { padding: 6rem 1.5rem; }
+      .projects-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .proj-card.featured { grid-column: span 1; }
+      footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+      .about-grid { grid-template-columns: 1fr; }
+      .services-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Mobile hamburger */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 24px; height: 1.5px;
+      background: #94A3B8;
+      transition: background 0.2s;
+    }
+    .nav-hamburger:hover span { background: #F59E0B; }
+    @media (max-width: 768px) {
+      .nav-hamburger { display: flex; }
+    }
+
+    /* Horizontal scroll ticker */
+    .ticker-wrap {
+      overflow: hidden;
+      border-top: 1px solid #1E293B;
+      border-bottom: 1px solid #1E293B;
+      padding: 1rem 0;
+      background: #0F172A;
+      position: relative;
+      z-index: 10;
+    }
+    .ticker-track {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker-item {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #334155;
+      padding: 0 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+    }
+    .ticker-item::after {
+      content: '◆';
+      color: #F59E0B;
+      font-size: 0.5rem;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Cursor dot */
+    .cursor-dot {
+      position: fixed;
+      width: 8px; height: 8px;
+      background: #F59E0B;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 32px; height: 32px;
+      border: 1px solid rgba(245,158,11,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: all 0.12s ease;
+    }
+    @media (hover: none) {
+      .cursor-dot, .cursor-ring { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Custom cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- WebGL fallback banner -->
+  <div id="webgl-fallback">
+    ⚠ Your browser doesn't support WebGL. The 3D experience is unavailable, but all content remains accessible below.
+  </div>
+
+  <!-- Scroll progress indicator -->
+  <div id="scroll-bar"></div>
+
+  <!-- Three.js Canvas -->
+  <canvas id="three-canvas"></canvas>
+
+  <!-- Navigation -->
+  <nav id="main-nav">
+    <div class="nav-logo">ARCH<span>|</span>FORM</div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#cta">Contact</a></li>
+    </ul>
+    <button class="nav-cta">Start a Project</button>
+    <div class="nav-hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- ─── CONTENT LAYER ─────────────────────────────────────── -->
+  <div class="content-layer">
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-line"></div>
+        <div class="hero-eyebrow-text">Est. 1994 · Chicago, IL</div>
+      </div>
+      <h1 class="hero-title">
+        <span class="line1">ARCHITECTING</span>
+        <span class="line2">THE</span>
+        <span class="line3">FUTURE</span>
+      </h1>
+      <p class="hero-sub">
+        We design and build the structures that define tomorrow's cities —
+        precision-engineered, sustainably constructed, and aesthetically uncompromising.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary">View Our Work</button>
+        <button class="btn-ghost">Our Process</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number">340<span>+</span></div>
+          <div class="stat-label">Projects Built</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">28<span>M</span></div>
+          <div class="stat-label">sq ft Constructed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">94<span>%</span></div>
+          <div class="stat-label">Client Retention</div>
+        </div>
+      </div>
+      <div class="scroll-hint">
+        <div class="scroll-hint-line"></div>
+        <div class="scroll-hint-text">Scroll</div>
+      </div>
+    </section>
+
+    <!-- TICKER -->
+    <div class="ticker-wrap content-layer">
+      <div class="ticker-track">
+        <!-- Doubled for seamless loop -->
+        <span class="ticker-item">Sustainable Design</span>
+        <span class="ticker-item">Urban Planning</span>
+        <span class="ticker-item">Structural Engineering</span>
+        <span class="ticker-item">Mixed-Use Development</span>
+        <span class="ticker-item">High-Rise Construction</span>
+        <span class="ticker-item">Smart Buildings</span>
+        <span class="ticker-item">Seismic Engineering</span>
+        <span class="ticker-item">Historic Restoration</span>
+        <span class="ticker-item">Sustainable Design</span>
+        <span class="ticker-item">Urban Planning</span>
+        <span class="ticker-item">Structural Engineering</span>
+        <span class="ticker-item">Mixed-Use Development</span>
+        <span class="ticker-item">High-Rise Construction</span>
+        <span class="ticker-item">Smart Buildings</span>
+        <span class="ticker-item">Seismic Engineering</span>
+        <span class="ticker-item">Historic Restoration</span>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="about-grid">
+        <div class="about-copy">
+          <div class="section-label reveal">
+            <div class="section-label-dot"></div>
+            <span class="section-label-text">Who We Are</span>
+          </div>
+          <h2 class="section-title reveal" style="transition-delay:0.1s">
+            Built on <em>precision.</em><br>Driven by vision.
+          </h2>
+          <p class="about-body reveal" style="transition-delay:0.2s">
+            For three decades, ARCH|FORM has translated bold architectural ambition into concrete
+            reality. From high-density urban towers to low-carbon civic centers, our integrated
+            design-build methodology compresses timelines without compromising craft.
+          </p>
+          <p class="about-body reveal" style="transition-delay:0.25s;margin-top:1rem;">
+            <strong>We don't just respond to briefs — we interrogate them.</strong> Every project
+            begins with a rigorous site and program analysis that reveals hidden potential,
+            producing buildings that serve their context for generations.
+          </p>
+          <div class="about-pillars">
+            <div class="pillar reveal" style="transition-delay:0.3s">
+              <div class="pillar-icon">
+                <svg viewBox="0 0 24 24"><path d="M3 21h18M9 21V9l3-6 3 6v12M9 12h6"/></svg>
+              </div>
+              <div>
+                <div class="pillar-title">Structural Integrity</div>
+                <div class="pillar-desc">Engineering systems designed for century-scale performance and seismic resilience.</div>
+              </div>
+            </div>
+            <div class="pillar reveal" style="transition-delay:0.38s">
+              <div class="pillar-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+              </div>
+              <div>
+                <div class="pillar-title">Sustainable Systems</div>
+                <div class="pillar-desc">LEED Platinum standard embedded from concept, not retrofitted at the end.</div>
+              </div>
+            </div>
+            <div class="pillar reveal" style="transition-delay:0.46s">
+              <div class="pillar-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              </div>
+              <div>
+                <div class="pillar-title">Integrated Design-Build</div>
+                <div class="pillar-desc">A single accountability chain from concept sketches to certificate of occupancy.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="about-visual-col reveal-right">
+          <div class="about-metric-card">
+            <div class="metric-row">
+              <div class="metric-item">
+                <div class="metric-val">30<span>yr</span></div>
+                <div class="metric-desc">in practice</div>
+              </div>
+              <div class="metric-item">
+                <div class="metric-val">4<span>x</span></div>
+                <div class="metric-desc">AIA award winner</div>
+              </div>
+              <div class="metric-item">
+                <div class="metric-val">17<span>+</span></div>
+                <div class="metric-desc">countries</div>
+              </div>
+              <div class="metric-item">
+                <div class="metric-val">Zero<span style="font-size:1rem"> CO₂</span></div>
+                <div class="metric-desc">target by 2030</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <div class="projects-header">
+        <div class="projects-header-left">
+          <div class="section-label reveal">
+            <div class="section-label-dot"></div>
+            <span class="section-label-text">Selected Work</span>
+          </div>
+          <h2 class="section-title reveal" style="transition-delay:0.1s">
+            Structures that<br><em>define skylines.</em>
+          </h2>
+        </div>
+        <a href="#" class="view-all-link reveal" style="transition-delay:0.15s">
+          All Projects
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+
+      <div class="projects-grid">
+        <!-- Featured Project -->
+        <div class="proj-card featured reveal" style="transition-delay:0.1s">
+          <div class="proj-visual">
+            <svg class="proj-svg" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+              <rect width="800" height="400" fill="#0F172A"/>
+              <!-- Sky gradient -->
+              <defs>
+                <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0F172A"/>
+                  <stop offset="100%" stop-color="#1E293B"/>
+                </linearGradient>
+                <linearGradient id="glow1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.8"/>
+                  <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <rect width="800" height="400" fill="url(#sky1)"/>
+              <!-- Ground -->
+              <rect y="350" width="800" height="50" fill="#1E293B"/>
+              <!-- Main tower -->
+              <rect x="340" y="80" width="120" height="270" fill="#1E293B" stroke="#F59E0B" stroke-width="0.5"/>
+              <!-- Tower floors -->
+              <line x1="340" y1="120" x2="460" y2="120" stroke="#334155" stroke-width="0.5"/>
+              <line x1="340" y1="155" x2="460" y2="155" stroke="#334155" stroke-width="0.5"/>
+              <line x1="340" y1="190" x2="460" y2="190" stroke="#334155" stroke-width="0.5"/>
+              <line x1="340" y1="225" x2="460" y2="225" stroke="#334155" stroke-width="0.5"/>
+              <line x1="340" y1="260" x2="460" y2="260" stroke="#334155" stroke-width="0.5"/>
+              <line x1="340" y1="295" x2="460" y2="295" stroke="#334155" stroke-width="0.5"/>
+              <!-- Windows lit up -->
+              <rect x="352" y="92" width="16" height="20" fill="#F59E0B" opacity="0.7" rx="1"/>
+              <rect x="376" y="92" width="16" height="20" fill="#F59E0B" opacity="0.4" rx="1"/>
+              <rect x="400" y="92" width="16" height="20" fill="#F59E0B" opacity="0.6" rx="1"/>
+              <rect x="424" y="92" width="16" height="20" fill="#F59E0B" opacity="0.3" rx="1"/>
+              <rect x="352" y="128" width="16" height="20" fill="#F59E0B" opacity="0.5" rx="1"/>
+              <rect x="400" y="128" width="16" height="20" fill="#F59E0B" opacity="0.8" rx="1"/>
+              <rect x="424" y="128" width="16" height="20" fill="#F59E0B" opacity="0.4" rx="1"/>
+              <rect x="352" y="163" width="16" height="20" fill="#F59E0B" opacity="0.6" rx="1"/>
+              <rect x="376" y="163" width="16" height="20" fill="#F59E0B" opacity="0.9" rx="1"/>
+              <rect x="424" y="163" width="16" height="20" fill="#F59E0B" opacity="0.5" rx="1"/>
+              <!-- Side buildings -->
+              <rect x="230" y="170" width="80" height="180" fill="#1E293B" stroke="#334155" stroke-width="0.5"/>
+              <rect x="495" y="200" width="70" height="150" fill="#1E293B" stroke="#334155" stroke-width="0.5"/>
+              <rect x="580" y="230" width="50" height="120" fill="#1E293B" stroke="#334155" stroke-width="0.5"/>
+              <rect x="150" y="210" width="60" height="140" fill="#1E293B" stroke="#334155" stroke-width="0.5"/>
+              <!-- Glow under tower -->
+              <ellipse cx="400" cy="355" rx="80" ry="10" fill="#F59E0B" opacity="0.15"/>
+              <!-- Antenna -->
+              <line x1="400" y1="80" x2="400" y2="40" stroke="#F59E0B" stroke-width="1.5"/>
+              <circle cx="400" cy="38" r="3" fill="#F59E0B" opacity="0.9"/>
+            </svg>
+            <div class="proj-hover-badge">View Case Study</div>
+          </div>
+          <div class="proj-info">
+            <div class="proj-category">Commercial High-Rise</div>
+            <div class="proj-name">Meridian Tower — Chicago Financial District</div>
+            <div class="proj-meta">
+              <span class="proj-meta-item">82 Floors</span>
+              <span class="proj-meta-dot"></span>
+              <span class="proj-meta-item">1.2M sq ft</span>
+              <span class="proj-meta-dot"></span>
+              <span class="proj-meta-item">LEED Platinum</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="proj-card reveal" style="transition-delay:0.15s">
+          <div class="proj-visual">
+            <svg class="proj-svg" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="225" fill="#0F172A"/>
+              <!-- Bridge structure -->
+              <line x1="0" y1="150" x2="400" y2="150" stroke="#334155" stroke-width="2"/>
+              <path d="M50,150 Q200,60 350,150" fill="none" stroke="#F59E0B" stroke-width="1.5" opacity="0.7"/>
+              <path d="M80,150 Q200,80 320,150" fill="none" stroke="#F59E0B" stroke-width="0.5" opacity="0.4"/>
+              <!-- Suspension cables -->
+              <line x1="200" y1="60" x2="100" y2="150" stroke="#475569" stroke-width="0.5"/>
+              <line x1="200" y1="60" x2="130" y2="150" stroke="#475569" stroke-width="0.5"/>
+              <line x1="200" y1="60" x2="160" y2="150" stroke="#475569" stroke-width="0.5"/>
+              <line x1="200" y1="60" x2="200" y2="150" stroke="#475569" stroke-width="0.5"/>
+              <line x1="200" y1="60" x2="240" y2="150" stroke="#475569" stroke-width="0.5"/>
+              <line x1="200" y1="60" x2="270" y2="150" stroke="#475569" stroke-width="0.5"/>
+              <line x1="200" y1="60" x2="300" y2="150" stroke="#475569" stroke-width="0.5"/>
+              <circle cx="200" cy="58" r="5" fill="#F59E0B" opacity="0.9"/>
+              <!-- Pylons -->
+              <rect x="192" y="60" width="16" height="100" fill="#1E293B" stroke="#F59E0B" stroke-width="0.5"/>
+              <!-- Road deck -->
+              <rect x="0" y="148" width="400" height="6" fill="#334155"/>
+              <!-- Water reflection -->
+              <ellipse cx="200" cy="190" rx="120" ry="12" fill="#F59E0B" opacity="0.06"/>
+            </svg>
+            <div class="proj-hover-badge">View Case Study</div>
+          </div>
+          <div class="proj-info">
+            <div class="proj-category">Infrastructure</div>
+            <div class="proj-name">Lakeshore Crossing Bridge</div>
+            <div class="proj-meta">
+              <span class="proj-meta-item">780m span</span>
+              <span class="proj-meta-dot"></span>
+              <span class="proj-meta-item">2023</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="proj-card reveal" style="transition-delay:0.2s">
+          <div class="proj-visual">
+            <svg class="proj-svg" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="225" fill="#0F172A"/>
+              <!-- Museum / civic -->
+              <defs>
+                <linearGradient id="roofGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.4"/>
+                  <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <!-- Main form -->
+              <polygon points="200,50 320,160 80,160" fill="none" stroke="#F59E0B" stroke-width="1" opacity="0.6"/>
+              <polygon points="200,50 320,160 80,160" fill="url(#roofGrad)" opacity="0.3"/>
+              <!-- Body -->
+              <rect x="80" y="160" width="240" height="55" fill="#1E293B" stroke="#334155" stroke-width="0.5"/>
+              <!-- Columns -->
+              <rect x="110" y="155" width="8" height="60" fill="#334155"/>
+              <rect x="145" y="155" width="8" height="60" fill="#334155"/>
+              <rect x="180" y="155" width="8" height="60" fill="#334155"/>
+              <rect x="215" y="155" width="8" height="60" fill="#334155"/>
+              <rect x="250" y="155" width="8" height="60" fill="#334155"/>
+              <rect x="285" y="155" width="8" height="60" fill="#334155"/>
+              <!-- Steps -->
+              <rect x="70" y="215" width="260" height="5" fill="#334155"/>
+              <rect x="65" y="218" width="270" height="5" fill="#1E293B"/>
+              <!-- Door -->
+              <rect x="185" y="175" width="30" height="40" fill="#0F172A" stroke="#F59E0B" stroke-width="0.5" opacity="0.7"/>
+              <!-- Center glow -->
+              <circle cx="200" cy="52" r="6" fill="#F59E0B" opacity="0.9"/>
+            </svg>
+            <div class="proj-hover-badge">View Case Study</div>
+          </div>
+          <div class="proj-info">
+            <div class="proj-category">Civic & Cultural</div>
+            <div class="proj-name">National Arts Pavilion, DC</div>
+            <div class="proj-meta">
+              <span class="proj-meta-item">180,000 sq ft</span>
+              <span class="proj-meta-dot"></span>
+              <span class="proj-meta-item">2022</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="proj-card reveal" style="transition-delay:0.25s">
+          <div class="proj-visual">
+            <svg class="proj-svg" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="225" fill="#0F172A"/>
+              <!-- Residential complex -->
+              <rect x="60" y="90" width="100" height="130" fill="#1E293B" stroke="#334155" stroke-width="0.5"/>
+              <rect x="170" y="60" width="80" height="160" fill="#1E293B" stroke="#F59E0B" stroke-width="0.5" opacity="0.7"/>
+              <rect x="260" y="100" width="90" height="120" fill="#1E293B" stroke="#334155" stroke-width="0.5"/>
+              <!-- Windows -->
+              <rect x="75" y="105" width="20" height="15" fill="#F59E0B" opacity="0.3" rx="1"/>
+              <rect x="105" y="105" width="20" height="15" fill="#F59E0B" opacity="0.5" rx="1"/>
+              <rect x="75" y="135" width="20" height="15" fill="#F59E0B" opacity="0.6" rx="1"/>
+              <rect x="105" y="135" width="20" height="15" fill="#F59E0B" opacity="0.2" rx="1"/>
+              <rect x="184" y="75" width="18" height="14" fill="#F59E0B" opacity="0.7" rx="1"/>
+              <rect x="210" y="75" width="18" height="14" fill="#F59E0B" opacity="0.4" rx="1"/>
+              <rect x="184" y="100" width="18" height="14" fill="#F59E0B" opacity="0.8" rx="1"/>
+              <rect x="210" y="100" width="18" height="14" fill="#F59E0B" opacity="0.3" rx="1"/>
+              <!-- Trees -->
+              <ellipse cx="140" cy="218" rx="20" ry="7" fill="#1E293B"/>
+              <rect x="138" y="200" width="4" height="18" fill="#334155"/>
+              <ellipse cx="220" cy="215" rx="18" ry="6" fill="#1E293B"/>
+              <ellipse cx="140" cy="210" rx="15" ry="10" fill="#1E2A1A" opacity="0.8"/>
+              <ellipse cx="220" cy="208" rx="13" ry="9" fill="#1E2A1A" opacity="0.8"/>
+              <!-- Ground -->
+              <rect y="218" width="400" height="7" fill="#1E293B"/>
+            </svg>
+            <div class="proj-hover-badge">View Case Study</div>
+          </div>
+          <div class="proj-info">
+            <div class="proj-category">Mixed-Use Residential</div>
+            <div class="proj-name">Cascade Living Towers, Austin</div>
+            <div class="proj-meta">
+              <span class="proj-meta-item">420 Units</span>
+              <span class="proj-meta-dot"></span>
+              <span class="proj-meta-item">2024</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="proj-card reveal" style="transition-delay:0.3s">
+          <div class="proj-visual">
+            <svg class="proj-svg" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="225" fill="#0F172A"/>
+              <!-- Industrial / warehouse -->
+              <polygon points="50,130 200,70 350,130" fill="none" stroke="#F59E0B" stroke-width="1" opacity="0.5"/>
+              <rect x="50" y="130" width="300" height="90" fill="#1E293B" stroke="#334155" stroke-width="0.5"/>
+              <!-- Roof trusses -->
+              <line x1="200" y1="70" x2="200" y2="130" stroke="#334155" stroke-width="0.5"/>
+              <line x1="125" y1="100" x2="125" y2="130" stroke="#334155" stroke-width="0.5"/>
+              <line x1="275" y1="100" x2="275" y2="130" stroke="#334155" stroke-width="0.5"/>
+              <!-- Doors -->
+              <rect x="80" y="160" width="50" height="60" fill="#0F172A" stroke="#334155" stroke-width="0.5"/>
+              <rect x="175" y="155" width="50" height="65" fill="#0F172A" stroke="#F59E0B" stroke-width="0.5" opacity="0.6"/>
+              <rect x="270" y="160" width="50" height="60" fill="#0F172A" stroke="#334155" stroke-width="0.5"/>
+              <!-- Crane arm outline -->
+              <line x1="50" y1="130" x2="20" y2="80" stroke="#F59E0B" stroke-width="1" opacity="0.4"/>
+              <line x1="20" y1="80" x2="80" y2="80" stroke="#F59E0B" stroke-width="1" opacity="0.4"/>
+              <line x1="50" y1="80" x2="50" y2="130" stroke="#F59E0B" stroke-width="0.5" opacity="0.3"/>
+            </svg>
+            <div class="proj-hover-badge">View Case Study</div>
+          </div>
+          <div class="proj-info">
+            <div class="proj-category">Industrial</div>
+            <div class="proj-name">NorthPlex Logistics Hub, Detroit</div>
+            <div class="proj-meta">
+              <span class="proj-meta-item">600,000 sq ft</span>
+              <span class="proj-meta-dot"></span>
+              <span class="proj-meta-item">2024</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services">
+      <div class="services-layout">
+        <div class="services-sticky">
+          <div class="section-label reveal">
+            <div class="section-label-dot"></div>
+            <span class="section-label-text">Capabilities</span>
+          </div>
+          <h2 class="section-title reveal" style="transition-delay:0.1s">
+            What we<br><em>build for you.</em>
+          </h2>
+          <p class="about-body reveal" style="transition-delay:0.2s;margin-top:1.5rem;">
+            From the first sketch to the final handover, we cover every discipline required
+            to deliver complex structures on time and on budget.
+          </p>
+        </div>
+        <div class="services-list">
+          <div class="service-item reveal">
+            <div class="service-num">01</div>
+            <div class="service-body">
+              <div class="service-title">Architectural Design</div>
+              <div class="service-desc">Full-spectrum design from schematic through construction documentation, integrating parametric modeling and BIM workflows.</div>
+            </div>
+            <div class="service-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <div class="service-item reveal" style="transition-delay:0.05s">
+            <div class="service-num">02</div>
+            <div class="service-body">
+              <div class="service-title">Structural Engineering</div>
+              <div class="service-desc">Advanced finite element analysis, seismic design, and long-span structural systems for towers, bridges, and complex geometries.</div>
+            </div>
+            <div class="service-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <div class="service-item reveal" style="transition-delay:0.1s">
+            <div class="service-num">03</div>
+            <div class="service-body">
+              <div class="service-title">General Contracting</div>
+              <div class="service-desc">Self-performing GC capabilities with in-house concrete, steel, and envelope trades, eliminating costly third-party coordination gaps.</div>
+            </div>
+            <div class="service-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <div class="service-item reveal" style="transition-delay:0.15s">
+            <div class="service-num">04</div>
+            <div class="service-body">
+              <div class="service-title">Sustainability Consulting</div>
+              <div class="service-desc">Net-zero carbon pathway development, embodied carbon analysis, and LEED / WELL / Passive House certification management.</div>
+            </div>
+            <div class="service-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <div class="service-item reveal" style="transition-delay:0.2s">
+            <div class="service-num">05</div>
+            <div class="service-body">
+              <div class="service-title">Urban & Master Planning</div>
+              <div class="service-desc">Neighbourhood-scale planning frameworks, transit-oriented development strategies, and zoning entitlement management.</div>
+            </div>
+            <div class="service-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="cta">
+      <div class="section-label reveal" style="justify-content:center">
+        <div class="section-label-dot"></div>
+        <span class="section-label-text">Get in Touch</span>
+      </div>
+      <h2 class="cta-title reveal" style="transition-delay:0.1s">
+        Ready to build<br><span>something lasting?</span>
+      </h2>
+      <p class="cta-sub reveal" style="transition-delay:0.2s">
+        Tell us about your project. Our team will respond within 24 hours
+        with an initial feasibility assessment, at no cost.
+      </p>
+      <div class="cta-actions reveal" style="transition-delay:0.3s">
+        <button class="btn-primary">Start a Project</button>
+        <button class="btn-ghost">Schedule a Call</button>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-logo">ARCH<span>|</span>FORM</div>
+      <div class="footer-copy">© 2024 ArchForm Construction Inc. All rights reserved.</div>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Careers</a>
+        <a href="#">Press</a>
+      </div>
+    </footer>
+
+  </div><!-- /content-layer -->
+
+  <!-- Three.js & App Script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── WebGL detection ─────────────────────────────────────── */
+    function supportsWebGL() {
+      try {
+        const c = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext &&
+          (c.getContext('webgl') || c.getContext('experimental-webgl')));
+      } catch (e) { return false; }
+    }
+    if (!supportsWebGL()) {
+      document.getElementById('webgl-fallback').style.display = 'block';
+      document.getElementById('three-canvas').style.display = 'none';
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       THREE.JS SCENE
+    ══════════════════════════════════════════════════════════ */
+    const canvas = document.getElementById('three-canvas');
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 6);
+
+    /* ── Lighting ─────────────────────────────────────────────── */
+    const ambientLight = new THREE.AmbientLight(0xF59E0B, 0.15);
+    scene.add(ambientLight);
+
+    const pointLight1 = new THREE.PointLight(0xF59E0B, 2.5, 20);
+    pointLight1.position.set(3, 5, 4);
+    scene.add(pointLight1);
+
+    const pointLight2 = new THREE.PointLight(0x60A5FA, 1.2, 20);
+    pointLight2.position.set(-4, -2, 3);
+    scene.add(pointLight2);
+
+    const dirLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
+    dirLight.position.set(5, 8, 5);
+    scene.add(dirLight);
+
+    /* ── Material Library ─────────────────────────────────────── */
+    const goldWire = new THREE.MeshBasicMaterial({ color: 0xF59E0B, wireframe: true, transparent: true, opacity: 0.6 });
+    const goldSolid = new THREE.MeshPhongMaterial({
+      color: 0x1E293B, emissive: 0x0F172A,
+      specular: 0xF59E0B, shininess: 80,
+      transparent: true, opacity: 0.92
+    });
+    const edgeMat = new THREE.LineBasicMaterial({ color: 0xF59E0B, transparent: true, opacity: 0.85 });
+    const ghostMat = new THREE.MeshBasicMaterial({ color: 0xF59E0B, wireframe: true, transparent: true, opacity: 0.12 });
+
+    /* ── Build: Low-poly Skyscraper Group ────────────────────── */
+    const buildingGroup = new THREE.Group();
+
+    function addEdges(mesh, mat) {
+      const edges = new THREE.EdgesGeometry(mesh.geometry);
+      const lines = new THREE.LineSegments(edges, mat);
+      mesh.add(lines);
+    }
+
+    // Main tower body
+    const towerGeo = new THREE.BoxGeometry(0.7, 3.2, 0.7);
+    const tower = new THREE.Mesh(towerGeo, goldSolid.clone());
+    tower.position.y = 0;
+    addEdges(tower, edgeMat);
+    buildingGroup.add(tower);
+
+    // Tower setbacks (stepped profile)
+    const setback1Geo = new THREE.BoxGeometry(0.55, 0.9, 0.55);
+    const setback1 = new THREE.Mesh(setback1Geo, goldSolid.clone());
+    setback1.position.y = 2.05;
+    addEdges(setback1, edgeMat);
+    buildingGroup.add(setback1);
+
+    const setback2Geo = new THREE.BoxGeometry(0.38, 0.6, 0.38);
+    const setback2 = new THREE.Mesh(setback2Geo, goldSolid.clone());
+    setback2.position.y = 2.85;
+    addEdges(setback2, edgeMat);
+    buildingGroup.add(setback2);
+
+    // Spire
+    const spireGeo = new THREE.CylinderGeometry(0.02, 0.04, 0.7, 6);
+    const spire = new THREE.Mesh(spireGeo, new THREE.MeshBasicMaterial({ color: 0xF59E0B }));
+    spire.position.y = 3.5;
+    buildingGroup.add(spire);
+
+    // Antenna tip glow sphere
+    const tipGeo = new THREE.SphereGeometry(0.04, 8, 8);
+    const tipMat = new THREE.MeshBasicMaterial({ color: 0xFCD34D });
+    const tip = new THREE.Mesh(tipGeo, tipMat);
+    tip.position.y = 3.88;
+    buildingGroup.add(tip);
+
+    // Side wings (structural)
+    [-0.55, 0.55].forEach((x) => {
+      const wingGeo = new THREE.BoxGeometry(0.22, 1.8, 0.22);
+      const wing = new THREE.Mesh(wingGeo, goldSolid.clone());
+      wing.position.set(x, -0.6, 0);
+      addEdges(wing, edgeMat);
+      buildingGroup.add(wing);
+    });
+
+    // Cross beams
+    for (let i = -1.4; i <= 1.4; i += 0.7) {
+      const beamGeo = new THREE.BoxGeometry(1.1, 0.04, 0.04);
+      const beam = new THREE.Mesh(beamGeo, new THREE.MeshBasicMaterial({ color: 0xF59E0B, transparent: true, opacity: 0.4 }));
+      beam.position.y = i;
+      buildingGroup.add(beam);
+    }
+
+    // Ghost outer shell (low-poly detail)
+    const ghostGeo = new THREE.BoxGeometry(1.1, 3.8, 1.1);
+    const ghost = new THREE.Mesh(ghostGeo, ghostMat);
+    ghost.position.y = 0.2;
+    buildingGroup.add(ghost);
+
+    // Floating structural rings
+    for (let y = -1.4; y <= 1.4; y += 0.7) {
+      const ringGeo = new THREE.TorusGeometry(0.75, 0.012, 4, 16);
+      const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xF59E0B, transparent: true, opacity: 0.18 }));
+      ring.position.y = y;
+      ring.rotation.x = Math.PI / 2;
+      buildingGroup.add(ring);
+    }
+
+    buildingGroup.position.set(2.2, -0.2, 0);
+    scene.add(buildingGroup);
+
+    /* ── Particle field (construction dust / stars) ───────────── */
+    const particleCount = 180;
+    const pPositions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i++) {
+      pPositions[i * 3]     = (Math.random() - 0.5) * 14;
+      pPositions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+      pPositions[i * 3 + 2] = (Math.random() - 0.5) * 8 - 2;
+    }
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+    const pMat = new THREE.PointsMaterial({
+      color: 0xF59E0B, size: 0.03,
+      transparent: true, opacity: 0.45
+    });
+    const particles = new THREE.Points(pGeo, pMat);
+    scene.add(particles);
+
+    /* ── Grid plane ──────────────────────────────────────────── */
+    const gridHelper = new THREE.GridHelper(20, 30, 0x1E293B, 0x1E293B);
+    gridHelper.position.y = -2.5;
+    gridHelper.material.transparent = true;
+    gridHelper.material.opacity = 0.35;
+    scene.add(gridHelper);
+
+    /* ══════════════════════════════════════════════════════════
+       SCROLL STATE
+    ══════════════════════════════════════════════════════════ */
+    const scrollState = {
+      current: 0,     // smoothed
+      target: 0,      // raw from scroll
+      ease: 0.08
+    };
+
+    // Section offsets (normalized 0–1 within page)
+    function getSectionProgress() {
+      const total = document.body.scrollHeight - window.innerHeight;
+      return Math.min(Math.max(scrollState.current / total, 0), 1);
+    }
+
+    window.addEventListener('scroll', () => {
+      scrollState.target = window.scrollY;
+      // Update progress bar
+      const total = document.body.scrollHeight - window.innerHeight;
+      const pct = (window.scrollY / total) * 100;
+      document.getElementById('scroll-bar').style.height = pct + '%';
+      // Nav scroll style
+      document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    /* ══════════════════════════════════════════════════════════
+       ANIMATION LOOP
+    ══════════════════════════════════════════════════════════ */
+    const clock = new THREE.Clock();
+    let mouseX = 0, mouseY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsed = clock.getElapsedTime();
+      const delta   = clock.getDelta ? 0.016 : 0.016;
+
+      /* Smooth scroll */
+      scrollState.current = lerp(scrollState.current, scrollState.target, scrollState.ease);
+
+      const p = getSectionProgress();   // 0 → 1 over full page
+      const isMobile = window.innerWidth < 768;
+
+      /* ── Section breakpoints:
+         0.00–0.25  → Hero     (right side, normal)
+         0.25–0.55  → About    (left side, tilted)
+         0.55–1.00  → Projects/Services (center, scaled up)
+      ────────────────────────────────────────────────── */
+
+      let targetX, targetY, targetScaleVal, targetRotX, targetRotY;
+
+      if (isMobile) {
+        // Mobile: always centered, smaller
+        targetX = 0;
+        targetY = 0.3;
+        targetScaleVal = 0.55;
+        targetRotX = p * Math.PI * 0.5;
+        targetRotY = elapsed * 0.25;
+      } else if (p < 0.25) {
+        // Hero: right side
+        const t = p / 0.25;
+        targetX = lerp(2.2, 2.2, t);
+        targetY = lerp(-0.2, -0.2, t);
+        targetScaleVal = lerp(1.0, 0.95, t);
+        targetRotX = lerp(0, 0.2, t);
+        targetRotY = lerp(0, 0.4, t);
+      } else if (p < 0.55) {
+        // About: slide to left
+        const t = (p - 0.25) / 0.30;
+        targetX = lerp(2.2, -2.4, t);
+        targetY = lerp(-0.2, 0.0, t);
+        targetScaleVal = lerp(0.95, 0.88, t);
+        targetRotX = lerp(0.2, -0.3, t);
+        targetRotY = lerp(0.4, -0.5, t);
+      } else {
+        // Projects+: center, larger
+        const t = Math.min((p - 0.55) / 0.30, 1);
+        targetX = lerp(-2.4, 0.0, t);
+        targetY = lerp(0.0, -0.1, t);
+        targetScaleVal = lerp(0.88, 1.15, t);
+        targetRotX = lerp(-0.3, p * Math.PI * 0.6, t);
+        targetRotY = lerp(-0.5, elapsed * 0.2, t);
+      }
+
+      /* ── Apply smooth transforms ─────────────────────────── */
+      buildingGroup.position.x = lerp(buildingGroup.position.x, targetX, 0.04);
+      buildingGroup.position.y = lerp(buildingGroup.position.y, targetY, 0.04);
+      buildingGroup.scale.setScalar(lerp(buildingGroup.scale.x, targetScaleVal, 0.04));
+
+      /* Gentle auto-rotation + mouse parallax */
+      buildingGroup.rotation.y = lerp(
+        buildingGroup.rotation.y,
+        targetRotY + mouseX * 0.12,
+        0.035
+      );
+      buildingGroup.rotation.x = lerp(
+        buildingGroup.rotation.x,
+        targetRotX + mouseY * 0.06,
+        0.035
+      );
+
+      /* Pulsing tip */
+      tip.material.opacity = 0.7 + Math.sin(elapsed * 2.5) * 0.3;
+      tip.scale.setScalar(1 + Math.sin(elapsed * 2.5) * 0.25);
+
+      /* Particle drift */
+      particles.rotation.y = elapsed * 0.03;
+      particles.rotation.x = elapsed * 0.012;
+
+      /* Ambient light pulse */
+      ambientLight.intensity = 0.12 + Math.sin(elapsed * 1.2) * 0.04;
+
+      /* Grid fade on scroll */
+      gridHelper.material.opacity = 0.35 * (1 - p * 0.6);
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    /* ── Resize handling ─────────────────────────────────────── */
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    /* ══════════════════════════════════════════════════════════
+       SCROLL REVEAL (IntersectionObserver)
+    ══════════════════════════════════════════════════════════ */
+    const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => io.observe(el));
+
+    /* ── Custom cursor ───────────────────────────────────────── */
+    const dot  = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let ringX = 0, ringY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      dot.style.left  = e.clientX + 'px';
+      dot.style.top   = e.clientY + 'px';
+      // Ring lags slightly
+      ringX += (e.clientX - ringX) * 0.12;
+      ringY += (e.clientY - ringY) * 0.12;
+    });
+
+    function updateRing() {
+      ring.style.left = ringX + 'px';
+      ring.style.top  = ringY + 'px';
+      requestAnimationFrame(updateRing);
+    }
+    updateRing();
+
+    // Scale ring on hover of interactive elements
+    document.querySelectorAll('a, button, .proj-card, .service-item, .pillar').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        ring.style.width  = '56px';
+        ring.style.height = '56px';
+        ring.style.borderColor = 'rgba(245,158,11,0.8)';
+      });
+      el.addEventListener('mouseleave', () => {
+        ring.style.width  = '32px';
+        ring.style.height = '32px';
+        ring.style.borderColor = 'rgba(245,158,11,0.5)';
+      });
+    });
+
+    /* ── Smooth anchor scrolling ─────────────────────────────── */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    /* ── CTA / Project buttons feedback ─────────────────────── */
+    document.querySelectorAll('.btn-primary, .btn-ghost, .nav-cta').forEach(btn => {
+      btn.addEventListener('click', function () {
+        this.style.transform = 'scale(0.97)';
+        setTimeout(() => { this.style.transform = ''; }, 150);
+      });
+    });
+
+  })();
+  </script>
+</body>
+</html>
