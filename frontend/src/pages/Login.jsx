@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API_BASE_URL from '../utils/api';
 import { Loader2 } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -64,6 +65,32 @@ const Login = () => {
         }
     };
 
+    const handleGoogleSuccess = async (credentialResponse) => {
+        setIsLoading(true);
+        setError('');
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ credential: credentialResponse.credential })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Google Login failed');
+            
+            login(data.token, data.user);
+            
+            if (data.user.role === 'Client') {
+                navigate('/client');
+            } else {
+                navigate(from, { replace: true });
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <div className="login-container">
             <div className="login-overlay"></div>
@@ -102,6 +129,20 @@ const Login = () => {
                             >
                                 {isLoading ? <><Loader2 className="spinner" size={20} /> Sending Code...</> : 'Send Login Code'}
                             </button>
+                            
+                            <div className="login-divider">
+                                <span>OR</span>
+                            </div>
+                            
+                            <div className="google-btn-wrapper">
+                                <GoogleLogin
+                                    onSuccess={handleGoogleSuccess}
+                                    onError={() => setError('Google Login Failed')}
+                                    theme="filled_black"
+                                    size="large"
+                                    width="100%"
+                                />
+                            </div>
                         </form>
                     ) : (
                         <form onSubmit={handleVerifyOTP} className="login-form">
@@ -221,6 +262,33 @@ const Login = () => {
                     display: flex;
                     flex-direction: column;
                     gap: 1.5rem;
+                }
+
+                .login-divider {
+                    display: flex;
+                    align-items: center;
+                    text-align: center;
+                    color: rgba(255, 255, 255, 0.3);
+                    font-size: 0.85rem;
+                    font-weight: 600;
+                    margin: 0.5rem 0;
+                }
+
+                .login-divider::before,
+                .login-divider::after {
+                    content: '';
+                    flex: 1;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                }
+
+                .login-divider span {
+                    padding: 0 1rem;
+                }
+
+                .google-btn-wrapper {
+                    display: flex;
+                    justify-content: center;
+                    width: 100%;
                 }
 
                 .input-group label {

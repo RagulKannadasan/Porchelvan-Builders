@@ -19,10 +19,15 @@ import Settings from './pages/admin/Settings';
 import Messages from './pages/admin/Messages';
 import Transactions from './pages/admin/Transactions';
 
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 function App() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'dummy-client-id.apps.googleusercontent.com';
+  
   return (
-    <AuthProvider>
-      <Router>
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <AuthProvider>
+        <Router>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
@@ -63,6 +68,7 @@ function App() {
         </Routes>
       </Router>
     </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 

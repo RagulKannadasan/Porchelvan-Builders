@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const { OAuth2Client } = require('google-auth-library');
 const sql = require('./db');
 require('dotenv').config();
 
@@ -619,6 +620,46 @@ app.post('/api/auth/verify-otp', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to verify OTP" });
+    }
+});
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || 'dummy-client-id');
+
+app.post('/api/auth/google', async (req, res) => {
+    try {
+        const { credential } = req.body;
+        if (!credential) return res.status(400).json({ error: "No credential provided" });
+
+        const ticket = await googleClient.verifyIdToken({
+            idToken: credential,
+            // audience: process.env.GOOGLE_CLIENT_ID,  // Specify if you have the client ID
+        });
+        const payload = ticket.getPayload();
+        const email = payload.email;
+        
+        if (!email) return res.status(400).json({ error: "Email not provided by Google" });
+
+        let [user] = await sql`SELECT * FROM users WHERE email = ${email}`;
+        
+        if (!user) {
+            let userRole = 'Client';
+            const usersCount = await sql`SELECT count(*) FROM users`;
+            
+            if (process.env.ADMIN_EMAIL && email === process.env.ADMIN_EMAIL) {
+                userRole = 'Admin';
+            } else if (parseInt(usersCount[0].count) === 0) {
+                userRole = 'Admin';
+            }
+            
+            [user] = await sql`INSERT INTO users (email, role) VALUES (${email}, ${userRole}) RETURNING *`;
+        }
+
+        const token = jwt.sign({ id: user.id, email: user.email, role: user.role, assignedProject: user.assignedProject }, JWT_SECRET, { expiresIn: '7d' });
+        
+        res.json({ token, user });
+    } catch (err) {
+        console.error('Google Auth Error:', err);
+        res.status(500).json({ error: "Failed to authenticate with Google" });
     }
 });
 
